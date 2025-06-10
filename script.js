@@ -504,92 +504,159 @@ app.controller("ctrl", function($scope, $timeout) {
 var draggedAppId = null;
 var draggedAppOriginPage = null;
 var draggedAppElement = null; // To reset style on dragend
+var placeholderElement = null;
+var currentPlaceholderPageIndex = -1;
+var currentPlaceholderAppGrid = null;
 
 function handleDragStart(event, appId, pageNumber) {
     const scope = angular.element(document.getElementById('phone-wrapper')).scope();
     draggedAppId = appId;
     draggedAppOriginPage = pageNumber;
-    draggedAppElement = event.target.closest('.app-icon');
+    const originalElement = event.target.closest('.app-icon');
+    draggedAppElement = originalElement;
+
+    if (originalElement) {
+        const clone = originalElement.cloneNode(true);
+        clone.classList.add('drag-image-clone');
+        document.body.appendChild(clone);
+        event.dataTransfer.setDragImage(clone, clone.offsetWidth / 2, clone.offsetHeight / 2);
+        requestAnimationFrame(() => {
+             document.body.removeChild(clone);
+        });
+
+        originalElement.classList.add('dragging');
+        // Hide original element slightly after drag image is captured
+        setTimeout(() => { if(draggedAppElement) draggedAppElement.style.visibility = 'hidden'; }, 0);
+    }
     event.dataTransfer.setData('text/plain', appId);
-    if (draggedAppElement) {
-        draggedAppElement.classList.add('dragging');
-    }
 }
 
-function handleDragOver(event) {
+function handleGridDragOver(event, pageNum) {
     event.preventDefault();
-    const targetIcon = event.target.closest('.app-icon');
-    if (targetIcon) {
-        targetIcon.classList.add('drag-over');
+    event.dataTransfer.dropEffect = 'move';
+
+    const scope = angular.element(document.getElementById('phone-wrapper')).scope();
+    currentPlaceholderAppGrid = event.currentTarget;
+    currentPlaceholderPageIndex = pageNum;
+
+    if (!placeholderElement) {
+        placeholderElement = document.createElement('div');
+        placeholderElement.classList.add('app-icon', 'app-icon-placeholder');
+    }
+    // Ensure placeholder has the correct size class dynamically
+    const currentIconSizeClass = 'icon-size-' + scope.settings.iconSize;
+    if (!placeholderElement.classList.contains(currentIconSizeClass)) {
+        placeholderElement.className = 'app-icon app-icon-placeholder ' + currentIconSizeClass; // Reset and set classes
+    }
+
+    const children = Array.from(currentPlaceholderAppGrid.children).filter(child => child !== placeholderElement && child !== draggedAppElement);
+    let newIndex = children.length;
+
+    for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        const rect = child.getBoundingClientRect();
+        // Simplified logic: if mouse is in the first half of the icon, insert before it.
+        // This works reasonably for items in a row. For multi-row, it's more complex.
+        if (event.clientX < rect.left + rect.width / 2) {
+            newIndex = i;
+            break;
+        }
+    }
+
+    if (placeholderElement.parentNode !== currentPlaceholderAppGrid || Array.from(currentPlaceholderAppGrid.children).indexOf(placeholderElement) !== newIndex) {
+        if (placeholderElement.parentNode) {
+            placeholderElement.parentNode.removeChild(placeholderElement);
+        }
+        if (newIndex < currentPlaceholderAppGrid.children.length) {
+            currentPlaceholderAppGrid.insertBefore(placeholderElement, children[newIndex]);
+        } else {
+            currentPlaceholderAppGrid.appendChild(placeholderElement);
+        }
     }
 }
 
-function handleDragLeave(event) {
-    const targetIcon = event.target.closest('.app-icon');
-    if (targetIcon) {
-        targetIcon.classList.remove('drag-over');
+function handleGridDragLeave(event, pageNum) {
+    // Check if the mouse is leaving the current app grid towards an element that is NOT part of the grid
+    if (currentPlaceholderAppGrid && !currentPlaceholderAppGrid.contains(event.relatedTarget)) {
+        if (placeholderElement && placeholderElement.parentNode) {
+            placeholderElement.parentNode.removeChild(placeholderElement);
+        }
+        // Don't reset currentPlaceholderAppGrid here, might be moving to another grid or same grid but outside child
+        // Let handleDragEnd or next handleGridDragOver sort it out.
     }
 }
 
-function handleDrop(event, targetAppId, targetPageNumber) {
+function handleGridDrop(event, pageNum) {
     event.preventDefault();
     const scope = angular.element(document.getElementById('phone-wrapper')).scope();
-    const targetIcon = event.target.closest('.app-icon');
-    if (targetIcon) {
-        targetIcon.classList.remove('drag-over');
-    }
 
-    if (!draggedAppId || draggedAppId === targetAppId) {
-        if (draggedAppElement) draggedAppElement.classList.remove('dragging');
-        draggedAppId = null;
-        draggedAppOriginPage = null;
-        draggedAppElement = null;
+    if (!draggedAppId || !placeholderElement || !placeholderElement.parentNode) {
+        handleDragEnd(event); // Clean up
         return;
     }
+
+    const targetGrid = placeholderElement.parentNode;
+    // Calculate dropIndex based on placeholder's position among actual icons (excluding itself and the original dragged item)
+    const actualIconsInTargetGrid = Array.from(targetGrid.children).filter(ch => ch !== placeholderElement && ch !== draggedAppElement);
+    let dropIndex = actualIconsInTargetGrid.indexOf(placeholderElement);
+    // If placeholder was inserted, its index among all children needs to be mapped to index among visible icons
+    dropIndex = Array.from(targetGrid.children).indexOf(placeholderElement);
+
 
     let sourceApps = draggedAppOriginPage === 1 ? scope.homeScreenAppsPage1 : scope.homeScreenAppsPage2;
-    let targetApps = targetPageNumber === 1 ? scope.homeScreenAppsPage1 : scope.homeScreenAppsPage2;
+    // currentPlaceholderPageIndex should be set by handleGridDragOver
+    let targetApps = currentPlaceholderPageIndex === 1 ? scope.homeScreenAppsPage1 : scope.homeScreenAppsPage2;
+
+    if (!targetApps) { // Fallback if currentPlaceholderPageIndex isn't correctly set
+        console.error("Target page index not set for drop, falling back to source page.");
+        targetApps = sourceApps;
+    }
+
 
     let draggedItemIndex = sourceApps.findIndex(app => app.id === draggedAppId);
-    let targetItemIndex = targetApps.findIndex(app => app.id === targetAppId);
 
-    if (draggedItemIndex === -1 || targetItemIndex === -1) {
-        if (draggedAppElement) draggedAppElement.classList.remove('dragging');
-        draggedAppId = null;
-        draggedAppOriginPage = null;
-        draggedAppElement = null;
+    if (draggedItemIndex === -1) {
+        handleDragEnd(event); // Clean up
         return;
     }
 
-    // Perform the move
     const [draggedItem] = sourceApps.splice(draggedItemIndex, 1);
-    targetApps.splice(targetItemIndex, 0, draggedItem);
 
-    scope.$apply(); // Crucial for Angular to update the DOM
+    // Adjust dropIndex if dragging within the same list and item was moved from before the drop point
+    if (sourceApps === targetApps && draggedItemIndex < dropIndex) {
+        dropIndex--;
+    }
 
-    if (draggedAppElement) draggedAppElement.classList.remove('dragging');
-    draggedAppId = null;
-    draggedAppOriginPage = null;
-    draggedAppElement = null;
+    targetApps.splice(dropIndex, 0, draggedItem);
+
+    scope.$apply();
     scope.toggleView('error', 'App position changed!');
+    handleDragEnd(event); // Full cleanup
 }
 
 function handleDragEnd(event) {
     if (draggedAppElement) {
+        draggedAppElement.style.visibility = 'visible';
         draggedAppElement.classList.remove('dragging');
     }
-    // Clean up any remaining drag-over classes if drop occurred outside a valid target
+    if (placeholderElement && placeholderElement.parentNode) {
+        placeholderElement.parentNode.removeChild(placeholderElement);
+    }
+
+    // Clean up any remaining drag-over classes (though less used now)
     document.querySelectorAll('.app-icon.drag-over').forEach(icon => icon.classList.remove('drag-over'));
 
     draggedAppId = null;
     draggedAppOriginPage = null;
     draggedAppElement = null;
+    placeholderElement = null;
+    currentPlaceholderAppGrid = null;
+    currentPlaceholderPageIndex = -1;
 }
 
-// Ensure these functions are accessible globally, e.g., by attaching to window if necessary,
-// though in a simple script like this, they are already global.
+// Ensure these functions are accessible globally
 // window.handleDragStart = handleDragStart;
-// window.handleDragOver = handleDragOver;
-// window.handleDragLeave = handleDragLeave;
-// window.handleDrop = handleDrop;
+// window.handleGridDragOver = handleGridDragOver;
+// window.handleGridDragLeave = handleGridDragLeave;
+// window.handleGridDrop = handleGridDrop;
 // window.handleDragEnd = handleDragEnd;

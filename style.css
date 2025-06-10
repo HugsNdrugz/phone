@@ -411,11 +411,33 @@ textarea.oneui-text-input-direct {
   font-weight: 400;
 }
 /* --- NEW: App Grid & Icons --- */
+.drag-image-clone {
+    position: absolute;
+    top: -9999px; /* Position off-screen */
+    left: -9999px;
+    pointer-events: none; /* Ensure it doesn't interfere with mouse events */
+    z-index: 1000; /* Ensure it's on top if briefly visible */
+    /* Copy crucial styles from .app-icon if not captured by cloneNode(true) perfectly */
+    background-color: inherit; /* Or be specific if issues arise */
+}
+
+.app-icon-placeholder {
+    border: 2px dashed #999 !important; /* Distinct border */
+    background-color: rgba(200, 200, 200, 0.15) !important; /* Semi-transparent background */
+    box-shadow: none !important; /* Remove any box shadow from .app-icon */
+}
+/* Hide actual icon/label content if the placeholder is based on cloning an app-icon element */
+.app-icon-placeholder .material-icons,
+.app-icon-placeholder .app-icon-label {
+    display: none !important;
+}
+
 .app-icon[draggable="true"] {
     cursor: grab;
 }
 .app-icon.dragging {
-    opacity: 0.4;
+    opacity: 0 !important; /* Hide it */
+    /* Alternatively, display: none; but opacity:0 keeps its space if needed before placeholder logic kicks in */
 }
 .app-icon.drag-over {
     border: 2px dashed #fff; /* Example style */
@@ -446,7 +468,8 @@ textarea.oneui-text-input-direct {
   cursor: pointer;
   padding: 8px 4px; /* UPDATED: Padding for icon and label */
   border: none;
-  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease; /* Added width/height transition */
+  /* transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease; */ /* Original transition */
+  transition: transform 0.25s ease-in-out, opacity 0.25s ease-in-out; /* New transition for reordering */
 }
 .app-icon:hover {
   transform: scale(1.1);

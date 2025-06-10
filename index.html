@@ -57,16 +57,16 @@
 									<div class="date">{{time.date}}</div>
 								</div>
 								<!-- App Grid -->
-								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
+								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]"
+										 ondragover="handleGridDragOver(event, 1)"
+										 ondragleave="handleGridDragLeave(event, 1)"
+										 ondrop="handleGridDrop(event, 1)">
 									<button ng-repeat="app in homeScreenAppsPage1 track by app.id"
 													draggable="true"
 													class="app-icon"
 													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
 													ng-click="executeAppAction(app)"
 													ondragstart="handleDragStart(event, app.id, 1)"
-													ondragover="handleDragOver(event)"
-													ondragleave="handleDragLeave(event)"
-													ondrop="handleDrop(event, app.id, 1)"
 													ondragend="handleDragEnd(event)">
 										<i class="material-icons">{{app.iconName}}</i>
 										<span class="app-icon-label">{{app.name}}</span>
@@ -75,16 +75,16 @@
 							</div>
 							<!-- Launcher Page 2 -->
 							<div class="launcher-page">
-								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
+								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]"
+										 ondragover="handleGridDragOver(event, 2)"
+										 ondragleave="handleGridDragLeave(event, 2)"
+										 ondrop="handleGridDrop(event, 2)">
 									<button ng-repeat="app in homeScreenAppsPage2 track by app.id"
 													draggable="true"
 													class="app-icon"
 													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
 													ng-click="executeAppAction(app)"
 													ondragstart="handleDragStart(event, app.id, 2)"
-													ondragover="handleDragOver(event)"
-													ondragleave="handleDragLeave(event)"
-													ondrop="handleDrop(event, app.id, 2)"
 													ondragend="handleDragEnd(event)">
 										<i class="material-icons">{{app.iconName}}</i>
 										<span class="app-icon-label">{{app.name}}</span>
