@@ -2,6 +2,7 @@
 :root {
   --bg-color: #f0f2f5;
   --card-bg-color: #ffffff;
+  --surface-bg-color: #f8f9fa; /* Slightly off-white for input backgrounds, if needed */
   --text-color-primary: #000000;
   --text-color-secondary: #555555;
   --header-bg-color: #f0f2f5;
@@ -10,16 +11,23 @@
   --accent-color-green: #09af00;
   --accent-color-green-darker: #078c00; /* NEW: For hover states */
   --accent-color-red: #b71c1c;
+  --accent-color-blue-rgb: 1, 87, 155; /* For box-shadow */
+  --text-color-on-accent: #ffffff;
+  --text-color-primary-rgb: 0,0,0; /* For nav-btn hover */
 }
 
 .theme-dark {
   --bg-color: #121212;
   --card-bg-color: #1e1e1e;
+  --surface-bg-color: #2c2c2c; /* Darker surface for inputs in dark mode */
   --text-color-primary: #ffffff;
   --text-color-secondary: #bbbbbb;
   --header-bg-color: #121212;
   --divider-color: #333333;
   --accent-color-green-darker: #067a00; /* NEW: Darker green for dark theme hover (can be same as light or adjusted) */
+  --accent-color-blue-rgb: 1, 87, 155; /* Remains same, color itself doesn't change */
+  --text-color-on-accent: #ffffff; /* Remains same */
+  --text-color-primary-rgb: 255,255,255; /* For nav-btn hover */
 }
 
 * {
@@ -126,6 +134,120 @@ button:focus {
 .toggleWrapper input.mobileToggle:checked + label:after {
   left: 24px;
 }
+
+/* --- NEW: Standardized Text Input Styles --- */
+.oneui-text-input,
+input[type="text"].oneui-text-input-direct, /* For applying to specific inputs without class if needed */
+input[type="tel"].oneui-text-input-direct,
+textarea.oneui-text-input-direct {
+  width: 100%; /* Inputs should generally be full-width within their container */
+  background-color: var(--surface-bg-color); /* Use surface color */
+  border: 1px solid var(--divider-color);
+  border-radius: 8px;
+  padding: 12px 10px;
+  font-size: 1rem;
+  color: var(--text-color-primary);
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  -webkit-appearance: none; /* Remove default iOS styling */
+  -moz-appearance: none;    /* Remove default Firefox styling */
+  appearance: none;        /* Remove default system styling */
+}
+
+.oneui-text-input:focus,
+input[type="text"].oneui-text-input-direct:focus,
+input[type="tel"].oneui-text-input-direct:focus,
+textarea.oneui-text-input-direct:focus {
+  border-color: var(--accent-color-blue);
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-blue-rgb), 0.2);
+}
+
+/* Ensure textarea has a min-height but can be overridden */
+textarea.oneui-text-input,
+textarea.oneui-text-input-direct {
+  min-height: 80px; /* Default reasonable min-height */
+  line-height: 1.4; /* Better for multi-line text */
+}
+/* End Standardized Text Input Styles */
+
+/* --- NEW: Standardized Button Styles --- */
+.oneui-button { /* Base for common properties */
+  padding: 10px 16px;
+  border-radius: 20px; /* One UI pill shape / highly rounded */
+  font-size: 0.9rem;
+  font-weight: 500; /* Medium */
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, filter 0.2s ease-in-out;
+  display: inline-flex; /* To allow align-items if icon is added */
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between icon and text if any */
+  min-height: 40px; /* Good minimum touch target height */
+}
+
+.oneui-button-primary {
+  background-color: var(--accent-color-blue);
+  color: var(--text-color-on-accent);
+}
+.oneui-button-primary:hover {
+  filter: brightness(90%);
+}
+.oneui-button-primary:active {
+  filter: brightness(80%);
+}
+
+/* Variant for green primary button if needed */
+.oneui-button-primary.green {
+  background-color: var(--accent-color-green);
+  color: var(--text-color-on-accent);
+}
+.oneui-button-primary.green:hover {
+  background-color: var(--accent-color-green-darker); /* Use the darker variable */
+  filter: none; /* Remove brightness filter if specific darker color is used */
+}
+.oneui-button-primary.green:active {
+  filter: brightness(80%); /* Or a darker green variable */
+}
+
+
+.oneui-button-text {
+  background-color: transparent;
+  color: var(--accent-color-blue);
+}
+.oneui-button-text:hover {
+  background-color: rgba(var(--accent-color-blue-rgb), 0.1);
+}
+.oneui-button-text:active {
+  background-color: rgba(var(--accent-color-blue-rgb), 0.2);
+}
+/* End Standardized Button Styles */
+
+/* --- NEW: In-App Header Back Button --- */
+.oneui-header-back-button {
+  position: absolute;
+  left: 16px; /* Standard padding from edge of header */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11; /* Above other header text, below potential popups */
+  font-size: 1.5rem; /* Approx 24px */
+  color: var(--text-color-primary);
+  cursor: pointer;
+  padding: 8px; /* Add padding to make it a better touch target */
+  margin-left: -8px; /* Counteract padding to keep icon alignment visually similar to 16px from edge */
+  border-radius: 50%; /* Circular ripple/hover area */
+  transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.oneui-header-back-button:hover {
+  /* For light theme, use black with low opacity. For dark, white with low opacity. */
+  background-color: rgba(var(--text-color-primary-rgb), 0.08);
+}
+
+.oneui-header-back-button:active {
+  background-color: rgba(var(--text-color-primary-rgb), 0.12);
+}
+/* End In-App Header Back Button */
 
 /* --- App Wrapper (Background) --- */
 .app-wrapper {
@@ -449,7 +571,7 @@ button:focus {
 .messages-wrapper ul li,
 .settings-wrapper ul li { /* NEW: Applied to settings as well */
   position: relative;
-  padding: 12px; /* Increased padding for better touch targets */
+  padding: 16px 12px; /* UPDATED: Adjusted padding (16px top/bottom, 12px left/right) */
   background-color: var(--card-bg-color); /* NEW: Use CSS variable */
   border-bottom: 1px solid var(--divider-color); /* NEW: Use CSS variable */
   cursor: pointer; /* NEW */
@@ -487,7 +609,7 @@ button:focus {
 .messages-wrapper ul li .name {
   font-size: 1rem; /* 16sp Body Description */
   color: var(--text-color-primary); /* NEW: Use CSS variable */
-  font-weight: 400; /* Regular */
+  font-weight: 500; /* UPDATED: Medium weight for primary list text */
 }
 .contacts-wrapper ul li .number,
 .messages-wrapper ul li .number {
@@ -531,7 +653,7 @@ button:focus {
 .confirmation-wrapper .dialog-content {
   background-color: var(--card-bg-color); /* NEW: Use CSS variable */
   width: 100%;
-  padding: 20px;
+  padding: 24px; /* UPDATED: Standard One UI dialog padding */
   border-radius: 16px 16px 0 0; /* Rounded top corners for dialog */
   transform: translateY(100%); /* Start off-screen below */
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth slide-up */
@@ -544,7 +666,7 @@ button:focus {
   font-weight: 500; /* Medium */
   text-align: left; /* Aligned to left */
   padding: 0;
-  margin-bottom: 20px;
+  margin-bottom: 24px; /* UPDATED: Align with padding rhythm */
   color: var(--text-color-primary); /* NEW: Use CSS variable */
   text-transform: capitalize; /* NEW: One UI capitalization */
 }
@@ -559,7 +681,7 @@ button:focus {
   width: auto;
   background: none; /* Flat buttons */
   border: none;
-  padding: 8px 12px;
+  padding: 10px 12px; /* UPDATED: Increased vertical padding for better touch target */
   color: var(--accent-color-blue); /* One UI button color */
   font-size: 1rem; /* 16sp Body Description */
   font-weight: 500; /* Medium */
@@ -581,35 +703,48 @@ button:focus {
   align-items: center;
   justify-content: space-around;
   z-index: 20; /* Ensure it's above the launcher, but below apps */
+  padding: 0 5px; /* Add some horizontal padding */
 }
 .nav-btn {
-  width: 20px;
-  height: 20px;
+  /* width: 20px; */ /* REMOVED: Let padding and icon size define width */
+  /* height: 20px; */ /* REMOVED: Let padding and icon size define height */
   background-color: transparent;
-  border: 2px solid var(--text-color-primary); /* UPDATED: Use CSS variable */
+  border: none; /* REMOVED: Border removed for icon buttons */
   cursor: pointer;
   opacity: 0.8;
   transition: opacity 0.2s;
+  padding: 8px; /* NEW: Padding for touch area */
+  display: flex; /* NEW: For centering icon */
+  align-items: center; /* NEW: For centering icon */
+  justify-content: center; /* NEW: For centering icon */
+  flex-grow: 1; /* NEW: Allow buttons to take up space */
+  border-radius: 8px; /* NEW: Slight rounding for hover feedback if any */
 }
 .nav-btn:hover {
   opacity: 1;
+  background-color: rgba(var(--text-color-primary-rgb, 0,0,0), 0.05); /* Subtle hover feedback */
 }
-.nav-btn.back {
-  border: solid var(--text-color-primary); /* UPDATED: Use CSS variable */
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 4px;
-  transform: rotate(135deg); /* Rotated square for triangle */
-  -webkit-transform: rotate(135deg);
-  height: auto;
-  width: auto;
+.theme-dark .nav-btn:hover {
+  background-color: rgba(var(--text-color-primary-rgb, 255,255,255), 0.05); /* Subtle hover feedback for dark theme */
 }
-.nav-btn.home {
-  border-radius: 50%;
-}
+
+/* Remove specific shape styling for .back, .home, .recents */
+.nav-btn.back,
+.nav-btn.home,
 .nav-btn.recents {
-  border-radius: 3px;
+  border: none;
+  border-radius: 0;
+  padding: 8px; /* Ensure consistent padding */
+  width: auto;
+  height: auto;
+  transform: none; /* Reset transform from old back button */
 }
+
+.nav-btn .material-icons {
+  font-size: 22px; /* Standardized icon size */
+  color: var(--text-color-primary);
+}
+
 
 /* --- Specific App Styles (Not fully One UI-ified but keeping original) --- */
 .app-wrapper .phone-wrapper .screen .call-wrapper { background: var(--bg-color); } /* UPDATED: Use CSS variable */
@@ -804,13 +939,14 @@ button:focus {
   position: absolute;
   top: -60px; /* Start off-screen */
   left: 0;
-  height: 50px;
+  /* height: 50px; */ /* REMOVED: Let padding define height */
   width: 100%; /* Default width */
   z-index: 200;
   background-color: #323232; /* Dark background */
   color: white; /* White text */
+  padding: 12px 16px; /* NEW: Added padding */
   text-align: center;
-  font-weight: bold;
+  font-weight: 500; /* UPDATED: Medium font weight for toasts */
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -847,8 +983,12 @@ button:focus {
     width: 40px; /* Width for side nav bar */
     height: 100%; /* Full height */
     flex-direction: column; /* Stack buttons vertically */
-    justify-content: center; /* Center buttons */
-    gap: 30px; /* Spacing between buttons */
+    justify-content: space-around; /* Adjusted for vertical spacing */
+    /* gap: 30px; */ /* Replaced by space-around */
+    padding: 5px 0; /* Add some vertical padding */
+  }
+  .nav-btn {
+    flex-grow: 0; /* Don't allow buttons to grow in vertical layout */
   }
   .pagination-dots {
     flex-direction: column; /* Stack dots vertically */
