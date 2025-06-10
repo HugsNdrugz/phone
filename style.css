@@ -411,55 +411,137 @@ textarea.oneui-text-input-direct {
 }
 /* Default App Icon styles - these will be overridden by grid-specific styles below */
 .app-icon {
-  width: 50px; /* Fallback/default icon width */
-  height: 50px; /* Fallback/default icon height */
-  border-radius: 12px; /* Fallback/default border radius */
+  width: 50px; /* Fallback/default icon width - will be overridden by grid specific */
+  height: auto; /* UPDATED: Height will be defined by content (icon + label) and padding */
+  /* min-height: 60px; */ /* Consider a min-height if needed, depends on label visibility */
+  border-radius: 12px; /* Fallback/default border radius - will be overridden */
   display: flex;
+  flex-direction: column; /* UPDATED: Stack icon and label vertically */
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */ /* REMOVED: We want icon towards top, label towards bottom */
+  justify-content: flex-start; /* Align icon to top, label will be pushed by margin or fixed height */
   color: white;
   cursor: pointer;
+  padding: 8px 4px; /* UPDATED: Padding for icon and label */
   border: none;
   transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease; /* Added width/height transition */
 }
 .app-icon:hover {
   transform: scale(1.1);
 }
-.app-icon i {
-  font-size: 28px; /* Fallback/default icon font size */
+.app-icon i.material-icons { /* More specific selector */
+  font-size: 28px; /* Fallback/default icon font size - will be overridden */
   transition: font-size 0.2s ease; /* Added font-size transition */
+  /* margin-bottom: 4px; */ /* Space between icon and label - or label margin-top */
+  width: 100%; /* Ensure icon can be centered if it's smaller than container */
+  text-align: center; /* Center icon text */
 }
+
+.app-icon-label {
+  font-size: 12px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* Label can take full width of padded button.app-icon */
+  text-align: center;
+  line-height: 1.2;
+  margin-top: 6px; /* Space between icon and label */
+  /* position: absolute; */ /* If we want to fix label to bottom */
+  /* bottom: 4px; */
+}
+
 
 /* Grid 4x3 and 4x4 Styles */
 .app-grid.grid-43,
 .app-grid.grid-44 {
   gap: 10px; /* Adjusted gap for 4 columns */
-  /* If using grid-template-columns, it would be: grid-template-columns: repeat(4, 1fr); */
-  /* However, we are sizing icons explicitly to fit */
+  /* Sizing is now handled by .icon-size-XXX classes */
 }
-.app-grid.grid-43 .app-icon,
-.app-grid.grid-44 .app-icon {
-  width: 45px;
-  height: 45px;
-  border-radius: 10px;
-}
-.app-grid.grid-43 .app-icon i,
-.app-grid.grid-44 .app-icon i {
-  font-size: 24px;
-}
+/* .app-grid.grid-43 .app-icon, */ /* REMOVED specific width/height/padding from here */
+/* .app-grid.grid-44 .app-icon { */
+  /* width: 45px; */
+  /* height: auto; */
+  /* min-height: 55px; */
+  /* border-radius: 10px; */
+  /* padding: 6px 2px; */
+/* } */
+/* .app-grid.grid-43 .app-icon i.material-icons, */ /* REMOVED specific font-size from here */
+/* .app-grid.grid-44 .app-icon i.material-icons { */
+  /* font-size: 24px; */
+/* } */
+/* .app-grid.grid-43 .app-icon .app-icon-label, */ /* REMOVED specific font-size from here */
+/* .app-grid.grid-44 .app-icon .app-icon-label { */
+  /* font-size: 11px; */
+  /* margin-top: 4px; */
+/* } */
+
 
 /* Grid 5x4 Styles */
 .app-grid.grid-54 {
   gap: 8px; /* Adjusted gap for 5 columns */
+  /* Sizing is now handled by .icon-size-XXX classes */
 }
-.app-grid.grid-54 .app-icon {
+/* .app-grid.grid-54 .app-icon { */ /* REMOVED specific width/height/padding from here */
+  /* width: 35px; */
+  /* height: auto; */
+  /* min-height: 45px; */
+  /* border-radius: 8px; */
+  /* padding: 4px 2px; */
+/* } */
+/* .app-grid.grid-54 .app-icon i.material-icons { */ /* REMOVED specific font-size from here */
+  /* font-size: 20px; */
+/* } */
+/* .app-grid.grid-54 .app-icon .app-icon-label { */ /* REMOVED specific font-size from here */
+  /* font-size: 10px; */
+  /* margin-top: 3px; */
+/* } */
+
+
+/* --- NEW: App Icon Size Classes --- */
+.app-icon.icon-size-small {
   width: 35px;
-  height: 35px;
-  border-radius: 8px;
+  min-height: 50px; /* Approx 35px icon + 15px label+spacing */
+  padding: 6px 2px;
+  border-radius: 8px; /* Consistent with smaller size */
 }
-.app-grid.grid-54 .app-icon i {
+.app-icon.icon-size-small i.material-icons {
   font-size: 20px;
 }
+.app-icon.icon-size-small .app-icon-label {
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.app-icon.icon-size-medium {
+  width: 45px;
+  min-height: 60px; /* Approx 45px icon + 15px label+spacing */
+  padding: 8px 4px;
+  border-radius: 10px; /* Consistent with medium size */
+}
+.app-icon.icon-size-medium i.material-icons {
+  font-size: 24px;
+}
+.app-icon.icon-size-medium .app-icon-label {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.app-icon.icon-size-large {
+  width: 55px;
+  min-height: 70px; /* Approx 55px icon + 15px label+spacing */
+  padding: 10px 4px;
+  border-radius: 12px; /* Consistent with larger size */
+}
+.app-icon.icon-size-large i.material-icons {
+  font-size: 28px;
+}
+.app-icon.icon-size-large .app-icon-label {
+  font-size: 12px;
+  margin-top: 5px;
+}
+/* End App Icon Size Classes */
 
 /* App Icon Specific Colors */
 .app-icon.phone { background-color: #09af00; }

@@ -58,17 +58,25 @@
 								</div>
 								<!-- App Grid -->
 								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
-									<button class="app-icon phone" ng-click="toggleView('call')"><i class="material-icons">phone</i></button>
-									<button class="app-icon contacts" ng-click="toggleView('contacts')"><i class="material-icons">contacts</i></button>
-									<button class="app-icon message" ng-click="toggleView('messages')"><i class="material-icons">message</i></button>
-									<button class="app-icon twitter" ng-click="toggleView('twitter')"></button>
+									<button ng-repeat="app in homeScreenAppsPage1 track by app.id"
+													class="app-icon"
+													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
+													ng-click="executeAppAction(app)">
+										<i class="material-icons">{{app.iconName}}</i>
+										<span class="app-icon-label">{{app.name}}</span>
+									</button>
 								</div>
 							</div>
 							<!-- Launcher Page 2 -->
 							<div class="launcher-page">
 								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
-									<button class="app-icon services" ng-click="toggleView('services')"><i class="material-icons">location_on</i></button>
-									<button class="app-icon settings" ng-click="toggleView('settings')"><i class="material-icons">settings</i></button>
+									<button ng-repeat="app in homeScreenAppsPage2 track by app.id"
+													class="app-icon"
+													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
+													ng-click="executeAppAction(app)">
+										<i class="material-icons">{{app.iconName}}</i>
+										<span class="app-icon-label">{{app.name}}</span>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -136,6 +144,23 @@
 									<div class="radio-option">
 										<input type="radio" id="gridSize5x4" name="appGridSize" value="5x4" ng-model="settings.appGridSize" ng-change="updateAppGridSize()">
 										<label for="gridSize5x4">5x4</label>
+									</div>
+								</div>
+							</li>
+							<li>
+								<p>App Icon Size</p>
+								<div class="setting-option-group">
+									<div class="radio-option">
+										<input type="radio" id="iconSizeSmall" name="appIconSize" value="small" ng-model="settings.iconSize" ng-change="updateIconSize()">
+										<label for="iconSizeSmall">Small</label>
+									</div>
+									<div class="radio-option">
+										<input type="radio" id="iconSizeMedium" name="appIconSize" value="medium" ng-model="settings.iconSize" ng-change="updateIconSize()">
+										<label for="iconSizeMedium">Medium</label>
+									</div>
+									<div class="radio-option">
+										<input type="radio" id="iconSizeLarge" name="appIconSize" value="large" ng-model="settings.iconSize" ng-change="updateIconSize()">
+										<label for="iconSizeLarge">Large</label>
 									</div>
 								</div>
 							</li>

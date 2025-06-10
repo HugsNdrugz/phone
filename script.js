@@ -151,10 +151,24 @@ app.controller("ctrl", function($scope, $timeout) {
     // For Twitter notifications toggle in settings
     $scope.isTwitterNotificationsActive = false;
 
+    // --- Home Screen App Definitions ---
+    $scope.homeScreenAppsPage1 = [
+        { id: 'phone_app', name: 'Phone', iconName: 'phone', colorClass: 'phone', actionType: 'toggleView', actionParam: 'call' },
+        { id: 'contacts_app', name: 'Contacts', iconName: 'contacts', colorClass: 'contacts', actionType: 'toggleView', actionParam: 'contacts' },
+        { id: 'messages_app', name: 'Messages', iconName: 'message', colorClass: 'message', actionType: 'toggleView', actionParam: 'messages' },
+        { id: 'twitter_app', name: 'Twitter', iconName: 'flutter_dash', colorClass: 'twitter', actionType: 'toggleView', actionParam: 'twitter' } // Using flutter_dash as a placeholder for Twitter icon
+    ];
+
+    $scope.homeScreenAppsPage2 = [
+        { id: 'services_app', name: 'Services', iconName: 'location_on', colorClass: 'services', actionType: 'toggleView', actionParam: 'services' },
+        { id: 'settings_app', name: 'Settings', iconName: 'settings', colorClass: 'settings', actionType: 'toggleView', actionParam: 'settings' }
+    ];
+
     // --- App Settings ---
     $scope.settings = $scope.settings || {};
     $scope.settings.appGridSize = '4x4'; // Default app grid size
     $scope.settings.screenSizeName = 'large'; // Default phone display size
+    $scope.settings.iconSize = 'medium'; // Default app icon size
 
     // --- Core Application Functions ---
 
@@ -371,6 +385,14 @@ app.controller("ctrl", function($scope, $timeout) {
         $scope.toggleView('error', 'Message Sent!');
     };
 
+    // --- Launcher App Action ---
+    $scope.executeAppAction = function(app) {
+        if (app.actionType === 'toggleView' && app.actionParam) {
+            $scope.toggleView(app.actionParam);
+        }
+        // Placeholder for other action types like opening URLs, etc.
+    };
+
     // --- Settings Functions ---
 
     // Updates app grid size and shows a toast
@@ -380,7 +402,7 @@ app.controller("ctrl", function($scope, $timeout) {
         // Future: Call a function here to re-render the app grid if dynamic updates are needed.
     };
 
-    // NEW: Updates phone size based on settings and shows a toast
+    // Updates phone size based on settings and shows a toast
     $scope.updatePhoneSize = function() {
         $scope.lg = ($scope.settings.screenSizeName === 'large');
         $scope.med = ($scope.settings.screenSizeName === 'medium');
@@ -391,6 +413,13 @@ app.controller("ctrl", function($scope, $timeout) {
 
     // Call initially to set the size flags from default settings
     $scope.updatePhoneSize();
+
+    // NEW: Updates app icon size and shows a toast
+    $scope.updateIconSize = function() {
+        // ng-model automatically updates $scope.settings.iconSize
+        // ng-class on the app icons in HTML will handle the visual change.
+        $scope.toggleView('error', 'App icon size set to ' + $scope.settings.iconSize);
+    };
 
     // Saves the current phone settings
     $scope.saveSettings = function() {
@@ -407,6 +436,7 @@ app.controller("ctrl", function($scope, $timeout) {
         console.log("  Twitter Notifications:", $scope.isTwitterNotificationsActive);
         console.log("  Phone Size:", $scope.settings.screenSizeName); // UPDATED
         console.log("  App Grid Size:", $scope.settings.appGridSize);
+        console.log("  App Icon Size:", $scope.settings.iconSize); // Added for logging
 
         // Provide feedback to the user that settings have been saved
         $scope.toggleView('error', 'Settings (debug log) Saved!'); // Changed message as it's more of a log now
