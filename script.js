@@ -75,6 +75,17 @@ app.controller("ctrl", function($scope, $timeout) {
     // These booleans control the "expandable app bar" feature.
     $scope.contactsHeaderCollapsed = false;
     $scope.settingsHeaderCollapsed = false;
+    $scope.callHeaderCollapsed = false;
+    $scope.messagesHeaderCollapsed = false;
+    $scope.servicesHeaderCollapsed = false;
+    $scope.twitterHeaderCollapsed = false;
+    $scope.serviceMessageHeaderCollapsed = false;
+    $scope.sendTweetHeaderCollapsed = false;
+    $scope.addContactHeaderCollapsed = false;
+    $scope.lifeAlertHeaderCollapsed = false;
+    $scope.textMessageHeaderCollapsed = false;
+    $scope.newMessageHeaderCollapsed = false;
+    $scope.loadingHeaderCollapsed = false;
     // Add more header collapse states here as more apps are styled with One UI headers.
 
     // Launcher (home screen) page navigation
@@ -188,6 +199,10 @@ app.controller("ctrl", function($scope, $timeout) {
             if (key.endsWith('Toggle')) {
                 $scope[key] = false;
             }
+            // NEW: Reset all HeaderCollapsed flags
+            if (key.endsWith('HeaderCollapsed')) {
+                $scope[key] = false;
+            }
         }
         // Reset the current view to null, indicating the home screen is active
         $scope.currentView = null;
@@ -212,6 +227,11 @@ app.controller("ctrl", function($scope, $timeout) {
         } else { // If opening a new view
             $scope.goHome(); // First, close all other open views (return to home state)
             $scope.currentView = val; // Set the newly opened view as the current view
+
+            // NEW: Explicitly reset the header state for the view being opened
+            if ($scope.hasOwnProperty(val + 'HeaderCollapsed')) {
+                $scope[val + 'HeaderCollapsed'] = false;
+            }
         }
 
         // Perform the actual toggle for the specific view
