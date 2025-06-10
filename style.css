@@ -2,7 +2,7 @@
 :root {
   --bg-color: #f0f2f5;
   --card-bg-color: #ffffff;
-  --card-bg-color-rgb: 255,255,255; /* NEW: RGB for card background */
+  --card-bg-color-rgb: 255,255,255;
   --surface-bg-color: #f8f9fa; /* Slightly off-white for input backgrounds, if needed */
   --text-color-primary: #000000;
   --text-color-secondary: #555555;
@@ -20,7 +20,7 @@
 .theme-dark {
   --bg-color: #121212;
   --card-bg-color: #1e1e1e;
-  --card-bg-color-rgb: 30,30,30; /* NEW: RGB for dark card background */
+  --card-bg-color-rgb: 30,30,30;
   --surface-bg-color: #2c2c2c; /* Darker surface for inputs in dark mode */
   --text-color-primary: #ffffff;
   --text-color-secondary: #bbbbbb;
@@ -387,48 +387,56 @@ textarea.oneui-text-input-direct {
 
 /* --- NEW: Clock Widget --- */
 .clock-widget {
-  color: white;
+  color: white; /* Default color, will be overridden by look-* classes */
   text-align: center;
   margin-top: 40px; /* Base margin, can be adjusted by specific background class */
-  /* text-shadow: 0 2px 4px rgba(0,0,0,0.5); */ /* Will be overridden by clock-look-* classes */
-  transition: background-color 0.3s, padding 0.3s, margin-top 0.3s; /* Smooth transitions for bg change */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Default shadow, will be overridden by look-* classes */
+  transition: background-color 0.3s, padding 0.3s, margin-top 0.3s, color 0.3s, text-shadow 0.3s; /* Smooth transitions */
 }
 
 /* Default look (matches old default, white text with shadow) */
 .clock-widget.clock-look-default .time,
-.clock-widget.clock-look-default .date {
+.clock-widget.clock-look-default .date,
+/* Apply default also if no specific look class is present, ensuring base .clock-widget styles are correctly applied or overridden */
+.clock-widget:not([class*="clock-look-"]) .time,
+.clock-widget:not([class*="clock-look-"]) .date {
   color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6); /* Slightly more defined shadow */
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 /* Dark text, no shadow (for light/transparent backgrounds) */
 .clock-widget.clock-look-transparent-dark .time,
 .clock-widget.clock-look-transparent-dark .date {
-  color: var(--text-color-primary); /* Uses theme's primary text color */
+  color: var(--text-color-primary);
   text-shadow: none;
 }
 
 /* Light text, no shadow (for dark/transparent backgrounds or when shadow is undesirable) */
 .clock-widget.clock-look-transparent-light .time,
 .clock-widget.clock-look-transparent-light .date {
-  color: white; /* Explicitly white, could be a variable like --always-white-text if needed */
+  color: white;
   text-shadow: none;
 }
 
 /* Clock Background Styles */
 .clock-widget.clock-bg-none {
   background-color: transparent;
-  padding: 0; /* Remove padding if no background */
-  /* margin-top: 40px; */ /* Keep default margin or adjust if needed */
+  padding: 0;
 }
 
 .clock-widget.clock-bg-subtle-card {
-  background-color: rgba(var(--card-bg-color-rgb), 0.1); /* Subtle card background */
+  background-color: rgba(var(--card-bg-color-rgb), 0.1);
   padding: 8px 16px;
-  border-radius: 16px; /* One UI often uses larger radii for widgets */
-  margin-top: 30px; /* Adjust margin as padding is added */
-  margin-bottom: 10px; /* Add some bottom margin */
-  /* text-shadow: none; */ /* Optional: remove text shadow if card bg provides enough contrast */
+  border-radius: 16px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+/* Ensure text styles are reapplied if card makes text hard to read with default shadow */
+.clock-widget.clock-bg-subtle-card.clock-look-default .time,
+.clock-widget.clock-bg-subtle-card.clock-look-default .date {
+    /* If card is light, default white text with shadow might be fine.
+       If card is dark (in dark theme), white text with shadow is also fine.
+       This rule is mostly for specificity if needed, but current setup should be okay. */
 }
 
 
@@ -456,7 +464,7 @@ textarea.oneui-text-input-direct {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Align icon to top, label will be spaced with margin */
+  justify-content: center; /* UPDATED: Center content vertically */
   color: white; /* Default text/icon color within the button */
   cursor: pointer;
   border: none;
@@ -515,7 +523,7 @@ textarea.oneui-text-input-direct {
 }
 .app-icon.icon-size-small .app-icon-label {
   font-size: 10px;
-  margin-top: 2px; /* Adjusted from previous label-only margin */
+  margin-top: 0; /* UPDATED: Rely on icon margin-bottom & padding */
 }
 
 .app-icon.icon-size-medium {
@@ -530,7 +538,7 @@ textarea.oneui-text-input-direct {
 }
 .app-icon.icon-size-medium .app-icon-label {
   font-size: 11px;
-  margin-top: 4px;
+  margin-top: 0; /* UPDATED: Rely on icon margin-bottom & padding */
 }
 
 .app-icon.icon-size-large {
@@ -545,7 +553,7 @@ textarea.oneui-text-input-direct {
 }
 .app-icon.icon-size-large .app-icon-label {
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: 0; /* UPDATED: Rely on icon margin-bottom & padding */
 }
 /* End App Icon Size Classes */
 
