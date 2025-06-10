@@ -409,153 +409,147 @@ textarea.oneui-text-input-direct {
   gap: 15px;
   margin-top: 30px;
 }
-/* Default App Icon styles - these will be overridden by grid-specific styles below */
-.app-icon {
-  width: 50px; /* Fallback/default icon width - will be overridden by grid specific */
-  height: auto; /* UPDATED: Height will be defined by content (icon + label) and padding */
-  /* min-height: 60px; */ /* Consider a min-height if needed, depends on label visibility */
-  border-radius: 12px; /* Fallback/default border radius - will be overridden */
+/* Default App Icon styles have been restructured */
+/* .app-icon is no longer used as the main repeated element */
+
+/* NEW: Wrapper for each app icon unit (graphic + label) */
+.app-icon-wrapper {
   display: flex;
-  flex-direction: column; /* UPDATED: Stack icon and label vertically */
+  flex-direction: column;
   align-items: center;
-  /* justify-content: center; */ /* REMOVED: We want icon towards top, label towards bottom */
-  justify-content: flex-start; /* Align icon to top, label will be pushed by margin or fixed height */
-  color: white;
-  cursor: pointer;
-  padding: 8px 4px; /* UPDATED: Padding for icon and label */
-  border: none;
-  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease; /* Added width/height transition */
+  /* justify-content: center; */ /* Let content determine height distribution for now */
+  /* Overall sizing (width, min-height, padding) will be done by icon-size-XXX classes */
+  transition: transform 0.2s ease; /* Keep hover transform on wrapper */
 }
-.app-icon:hover {
+.app-icon-wrapper:hover {
   transform: scale(1.1);
 }
-.app-icon i.material-icons { /* More specific selector */
-  font-size: 28px; /* Fallback/default icon font size - will be overridden */
-  transition: font-size 0.2s ease; /* Added font-size transition */
-  /* margin-bottom: 4px; */ /* Space between icon and label - or label margin-top */
+
+/* NEW: Clickable graphic part of the icon */
+.app-icon-graphic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white; /* Default icon color, can be overridden by specific app styles if needed */
+  cursor: pointer;
+  border: none;
+  padding: 0; /* Remove button padding, sizing via width/height */
+  background-color: transparent; /* Base background, colorClass will override */
+  /* Width, height, border-radius will be set by icon-size-XXX classes */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease; /* For potential future hover effects on graphic */
+}
+/* Ensure material icons inside the graphic button are sized by parent's font-size or specific rules */
+.app-icon-graphic i.material-icons {
   width: 100%; /* Ensure icon can be centered if it's smaller than container */
   text-align: center; /* Center icon text */
+  transition: font-size 0.2s ease; /* For icon size transitions */
+  /* font-size will be set by icon-size-XXX classes */
 }
 
+/* NEW: Label style, now a direct child of .app-icon-wrapper */
 .app-icon-label {
-  font-size: 12px;
-  color: white;
+  color: white; /* Assuming labels are always white on app launcher background */
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%; /* Label can take full width of padded button.app-icon */
+  width: 100%; /* Takes width of .app-icon-wrapper (which is sized by icon-size-XXX) */
   text-align: center;
   line-height: 1.2;
-  margin-top: 6px; /* Space between icon and label */
-  /* position: absolute; */ /* If we want to fix label to bottom */
-  /* bottom: 4px; */
+  /* font-size and margin-top will be set by icon-size-XXX classes */
+  transition: font-size 0.2s ease, margin-top 0.2s ease;
 }
 
 
-/* Grid 4x3 and 4x4 Styles */
+/* Grid 4x3 and 4x4 Styles - Only for layout */
 .app-grid.grid-43,
 .app-grid.grid-44 {
-  gap: 10px; /* Adjusted gap for 4 columns */
-  /* Sizing is now handled by .icon-size-XXX classes */
+  gap: 10px;
 }
-/* .app-grid.grid-43 .app-icon, */ /* REMOVED specific width/height/padding from here */
-/* .app-grid.grid-44 .app-icon { */
-  /* width: 45px; */
-  /* height: auto; */
-  /* min-height: 55px; */
-  /* border-radius: 10px; */
-  /* padding: 6px 2px; */
-/* } */
-/* .app-grid.grid-43 .app-icon i.material-icons, */ /* REMOVED specific font-size from here */
-/* .app-grid.grid-44 .app-icon i.material-icons { */
-  /* font-size: 24px; */
-/* } */
-/* .app-grid.grid-43 .app-icon .app-icon-label, */ /* REMOVED specific font-size from here */
-/* .app-grid.grid-44 .app-icon .app-icon-label { */
-  /* font-size: 11px; */
-  /* margin-top: 4px; */
-/* } */
 
-
-/* Grid 5x4 Styles */
+/* Grid 5x4 Styles - Only for layout */
 .app-grid.grid-54 {
-  gap: 8px; /* Adjusted gap for 5 columns */
-  /* Sizing is now handled by .icon-size-XXX classes */
+  gap: 8px;
 }
-/* .app-grid.grid-54 .app-icon { */ /* REMOVED specific width/height/padding from here */
-  /* width: 35px; */
-  /* height: auto; */
-  /* min-height: 45px; */
-  /* border-radius: 8px; */
-  /* padding: 4px 2px; */
-/* } */
-/* .app-grid.grid-54 .app-icon i.material-icons { */ /* REMOVED specific font-size from here */
-  /* font-size: 20px; */
-/* } */
-/* .app-grid.grid-54 .app-icon .app-icon-label { */ /* REMOVED specific font-size from here */
-  /* font-size: 10px; */
-  /* margin-top: 3px; */
-/* } */
 
 
-/* --- NEW: App Icon Size Classes --- */
-.app-icon.icon-size-small {
-  width: 35px;
-  min-height: 50px; /* Approx 35px icon + 15px label+spacing */
-  padding: 6px 2px;
-  border-radius: 8px; /* Consistent with smaller size */
+/* --- App Icon Size Classes (Applied to .app-icon-wrapper) --- */
+.app-icon-wrapper.icon-size-small {
+  width: 35px; /* Overall width of the icon unit */
+  min-height: 50px;
+  padding: 0; /* Wrapper padding removed, graphic/label will manage internal space */
 }
-.app-icon.icon-size-small i.material-icons {
+.app-icon-wrapper.icon-size-small .app-icon-graphic {
+  width: 35px; /* Graphic button takes full width of wrapper */
+  height: 35px;
+  border-radius: 8px;
+}
+.app-icon-wrapper.icon-size-small .app-icon-graphic i.material-icons {
   font-size: 20px;
 }
-.app-icon.icon-size-small .app-icon-label {
+.app-icon-wrapper.icon-size-small .app-icon-label {
   font-size: 10px;
   margin-top: 3px;
 }
 
-.app-icon.icon-size-medium {
+.app-icon-wrapper.icon-size-medium {
   width: 45px;
-  min-height: 60px; /* Approx 45px icon + 15px label+spacing */
-  padding: 8px 4px;
-  border-radius: 10px; /* Consistent with medium size */
+  min-height: 60px;
+  padding: 0;
 }
-.app-icon.icon-size-medium i.material-icons {
+.app-icon-wrapper.icon-size-medium .app-icon-graphic {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+}
+.app-icon-wrapper.icon-size-medium .app-icon-graphic i.material-icons {
   font-size: 24px;
 }
-.app-icon.icon-size-medium .app-icon-label {
+.app-icon-wrapper.icon-size-medium .app-icon-label {
   font-size: 11px;
   margin-top: 4px;
 }
 
-.app-icon.icon-size-large {
+.app-icon-wrapper.icon-size-large {
   width: 55px;
-  min-height: 70px; /* Approx 55px icon + 15px label+spacing */
-  padding: 10px 4px;
-  border-radius: 12px; /* Consistent with larger size */
+  min-height: 70px;
+  padding: 0;
 }
-.app-icon.icon-size-large i.material-icons {
+.app-icon-wrapper.icon-size-large .app-icon-graphic {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+}
+.app-icon-wrapper.icon-size-large .app-icon-graphic i.material-icons {
   font-size: 28px;
 }
-.app-icon.icon-size-large .app-icon-label {
+.app-icon-wrapper.icon-size-large .app-icon-label {
   font-size: 12px;
   margin-top: 5px;
 }
 /* End App Icon Size Classes */
 
-/* App Icon Specific Colors */
-.app-icon.phone { background-color: #09af00; }
-.app-icon.contacts { background-color: #009688; }
-.app-icon.message { background-color: #4a26fd; }
-.app-icon.services { background-color: #e64a19; }
-.app-icon.settings { background-color: #9e9e9e; }
-.app-icon.twitter { 
+/* App Icon Specific Colors (Applied to .app-icon-graphic now) */
+.app-icon-graphic.phone { background-color: #09af00; }
+.app-icon-graphic.contacts { background-color: #009688; }
+.app-icon-graphic.message { background-color: #4a26fd; }
+.app-icon-graphic.services { background-color: #e64a19; }
+.app-icon-graphic.settings { background-color: #9e9e9e; }
+.app-icon-graphic.twitter {
     background-color: white; 
+    /* The iconName 'flutter_dash' will likely show if <i> is not empty.
+       If an image is truly needed, the <i> tag might need to be empty for this specific app
+       and CSS :before/:after or direct background on the <i> might be needed.
+       For now, this rule might not fully apply as expected due to Material Icon text. */
     background-image: url("http://www.stickpng.com/assets/images/580b57fcd9996e24bc43c53e.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
 }
+.app-icon-graphic.twitter i.material-icons {
+    color: transparent; /* Hide the flutter_dash text if background image is desired */
+}
+
 
 /* --- REFACTORED: App View Common Styles (All slide-up apps) --- */
 .app-view {
