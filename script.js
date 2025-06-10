@@ -90,8 +90,7 @@ app.controller("ctrl", function($scope, $timeout) {
     $scope.med = false; // Medium zoom
     $scope.lg = true;  // Large zoom (default active size)
     $scope.xl = false; // Extra large zoom
-    // This object holds the selected phone size from the settings UI.
-    $scope.screenSize = { name: "large" }; 
+    // OLD: $scope.screenSize = { name: "large" }; // This will be moved into $scope.settings
 
     // Initial state for all application toggle flags (all closed by default)
     $scope.callToggle = false;
@@ -140,6 +139,11 @@ app.controller("ctrl", function($scope, $timeout) {
     
     // For Twitter notifications toggle in settings
     $scope.isTwitterNotificationsActive = false;
+
+    // --- App Settings ---
+    $scope.settings = $scope.settings || {};
+    $scope.settings.appGridSize = '4x4'; // Default app grid size
+    $scope.settings.screenSizeName = 'large'; // Default phone display size
 
     // --- Core Application Functions ---
 
@@ -349,23 +353,43 @@ app.controller("ctrl", function($scope, $timeout) {
 
     // --- Settings Functions ---
 
+    // Updates app grid size and shows a toast
+    $scope.updateAppGridSize = function() {
+        // ng-model automatically updates $scope.settings.appGridSize
+        $scope.toggleView('error', 'App grid size set to ' + $scope.settings.appGridSize);
+        // Future: Call a function here to re-render the app grid if dynamic updates are needed.
+    };
+
+    // NEW: Updates phone size based on settings and shows a toast
+    $scope.updatePhoneSize = function() {
+        $scope.lg = ($scope.settings.screenSizeName === 'large');
+        $scope.med = ($scope.settings.screenSizeName === 'medium');
+        $scope.sm = ($scope.settings.screenSizeName === 'small');
+        $scope.xl = ($scope.settings.screenSizeName === 'extra-large');
+        $scope.toggleView('error', 'Phone size set to ' + $scope.settings.screenSizeName);
+    };
+
+    // Call initially to set the size flags from default settings
+    $scope.updatePhoneSize();
+
     // Saves the current phone settings
     $scope.saveSettings = function() {
-        // Apply phone size changes based on selected radio button
-        $scope.lg = ($scope.screenSize.name === 'large');
-        $scope.med = ($scope.screenSize.name === 'medium');
-        $scope.sm = ($scope.screenSize.name === 'small');
-        $scope.xl = ($scope.screenSize.name === 'extra-large'); // Added for completeness, though not in UI.
+        // Apply phone size changes based on selected radio button - This is now handled by updatePhoneSize directly via ng-change
+        // $scope.lg = ($scope.settings.screenSizeName === 'large');
+        // $scope.med = ($scope.settings.screenSizeName === 'medium');
+        // $scope.sm = ($scope.settings.screenSizeName === 'small');
+        // $scope.xl = ($scope.settings.screenSizeName === 'extra-large');
 
         // In a real application, you would save `isTwitterNotificationsActive`
-        // and `screenSize.name` to persistent storage or send to a backend.
-        console.log("Settings saved:");
+        // and other settings to persistent storage or send to a backend.
+        console.log("Settings saved (Note: Save button is removed, changes apply instantly):");
         console.log("  Dark Mode:", $scope.darkMode);
         console.log("  Twitter Notifications:", $scope.isTwitterNotificationsActive);
-        console.log("  Phone Size:", $scope.screenSize.name);
+        console.log("  Phone Size:", $scope.settings.screenSizeName); // UPDATED
+        console.log("  App Grid Size:", $scope.settings.appGridSize);
 
         // Provide feedback to the user that settings have been saved
-        $scope.toggleView('error', 'Settings Saved!');
+        $scope.toggleView('error', 'Settings (debug log) Saved!'); // Changed message as it's more of a log now
     };
 
     // --- Mock Data ---

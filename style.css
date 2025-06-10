@@ -8,6 +8,7 @@
   --divider-color: #e0e0e0;
   --accent-color-blue: #01579b;
   --accent-color-green: #09af00;
+  --accent-color-green-darker: #078c00; /* NEW: For hover states */
   --accent-color-red: #b71c1c;
 }
 
@@ -18,6 +19,7 @@
   --text-color-secondary: #bbbbbb;
   --header-bg-color: #121212;
   --divider-color: #333333;
+  --accent-color-green-darker: #067a00; /* NEW: Darker green for dark theme hover (can be same as light or adjusted) */
 }
 
 * {
@@ -29,7 +31,7 @@ body,
 html {
   height: 100%;
   overflow: hidden;
-  background-color: #f0f0f0;
+  background-color: var(--bg-color); /* UPDATED: Use CSS variable */
 }
 input:focus,
 select:focus,
@@ -42,12 +44,15 @@ button:focus {
   outline: 0;
 }
 /* ORIGINAL: Unused mixin */
+/*
 .inactiveMixin {
   content: "";
   position: absolute;
   display: block;
 }
+*/
 /* ORIGINAL: Unused mixins */
+/*
 .beforeAnimation {
   -moz-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
   -o-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
@@ -61,6 +66,7 @@ button:focus {
   -webkit-transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
   transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
 }
+*/
 /* --- Toggle Switch Styles --- */
 .toggleWrapper input.mobileToggle {
   opacity: 0;
@@ -77,7 +83,7 @@ button:focus {
   -webkit-tap-highlight-color: transparent;
   height: 30px;
   width: 50px;
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--divider-color); /* UPDATED: Use CSS variable */
   border-radius: 60px;
 }
 .toggleWrapper input.mobileToggle + label:before {
@@ -103,7 +109,7 @@ button:focus {
   -o-transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
   -webkit-transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
   transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
-  background: whitesmoke;
+  background: var(--card-bg-color); /* UPDATED: Use CSS variable */
   height: 28px;
   width: 28px;
   top: 1px;
@@ -111,7 +117,7 @@ button:focus {
   border-radius: 60px;
 }
 .toggleWrapper input.mobileToggle:checked + label:before {
-  background: #2ecc71;
+  background: var(--accent-color-green); /* UPDATED: Use CSS variable */
   -moz-transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
   -o-transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
   -webkit-transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
@@ -244,13 +250,15 @@ button:focus {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--text-color-secondary); /* UPDATED: Use CSS variable */
+  opacity: 0.6; /* NEW: Slight transparency for inactive dots */
   margin: 0 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, opacity 0.3s; /* UPDATED: Transition opacity */
 }
 .pagination-dots .dot.active {
-  background-color: white;
+  background-color: var(--text-color-primary); /* UPDATED: Use CSS variable */
+  opacity: 1; /* NEW: Full opacity for active dot */
 }
 
 /* --- NEW: Clock Widget --- */
@@ -270,31 +278,67 @@ button:focus {
   font-weight: 400;
 }
 /* --- NEW: App Grid & Icons --- */
+/* Base App Grid Styles (Default to 4x4 if no specific class is applied, but explicit classes are preferred) */
 .app-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  /* Default gap, will be overridden by specific grid classes */
   gap: 15px;
   margin-top: 30px;
 }
+/* Default App Icon styles - these will be overridden by grid-specific styles below */
 .app-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  width: 50px; /* Fallback/default icon width */
+  height: 50px; /* Fallback/default icon height */
+  border-radius: 12px; /* Fallback/default border radius */
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   cursor: pointer;
   border: none;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease; /* Added width/height transition */
 }
 .app-icon:hover {
   transform: scale(1.1);
 }
 .app-icon i {
-  font-size: 28px;
+  font-size: 28px; /* Fallback/default icon font size */
+  transition: font-size 0.2s ease; /* Added font-size transition */
 }
+
+/* Grid 4x3 and 4x4 Styles */
+.app-grid.grid-43,
+.app-grid.grid-44 {
+  gap: 10px; /* Adjusted gap for 4 columns */
+  /* If using grid-template-columns, it would be: grid-template-columns: repeat(4, 1fr); */
+  /* However, we are sizing icons explicitly to fit */
+}
+.app-grid.grid-43 .app-icon,
+.app-grid.grid-44 .app-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+}
+.app-grid.grid-43 .app-icon i,
+.app-grid.grid-44 .app-icon i {
+  font-size: 24px;
+}
+
+/* Grid 5x4 Styles */
+.app-grid.grid-54 {
+  gap: 8px; /* Adjusted gap for 5 columns */
+}
+.app-grid.grid-54 .app-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+}
+.app-grid.grid-54 .app-icon i {
+  font-size: 20px;
+}
+
 /* App Icon Specific Colors */
 .app-icon.phone { background-color: #09af00; }
 .app-icon.contacts { background-color: #009688; }
@@ -530,7 +574,9 @@ button:focus {
   left: 0;
   width: 100%;
   height: 40px;
-  background-color: rgba(0, 0, 0, 0.8);
+  /* NEW: Use variable for nav bar background, consider a specific one if needed */
+  background-color: var(--header-bg-color);
+  opacity: 0.9; /* Slight transparency for nav bar */
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -540,7 +586,7 @@ button:focus {
   width: 20px;
   height: 20px;
   background-color: transparent;
-  border: 2px solid white;
+  border: 2px solid var(--text-color-primary); /* UPDATED: Use CSS variable */
   cursor: pointer;
   opacity: 0.8;
   transition: opacity 0.2s;
@@ -549,7 +595,7 @@ button:focus {
   opacity: 1;
 }
 .nav-btn.back {
-  border: solid white;
+  border: solid var(--text-color-primary); /* UPDATED: Use CSS variable */
   border-width: 0 2px 2px 0;
   display: inline-block;
   padding: 4px;
@@ -566,14 +612,14 @@ button:focus {
 }
 
 /* --- Specific App Styles (Not fully One UI-ified but keeping original) --- */
-.app-wrapper .phone-wrapper .screen .call-wrapper { background: white; }
-.app-wrapper .phone-wrapper .screen .call-wrapper h2 { margin: 0 0 20px 0; font-size: 14px; padding-left: 10px; }
-.app-wrapper .phone-wrapper .screen .call-wrapper .number-input { border: 0; width: 100%; padding: 10px; margin-top: 25px; text-align: center; font-size: 1.5em; font-weight: 300; height: 60px; }
-.app-wrapper .phone-wrapper .screen .call-wrapper button { width: 100%; padding: 15px; background: #09af00; border: 1px solid #09af00; color: white; }
+.app-wrapper .phone-wrapper .screen .call-wrapper { background: var(--bg-color); } /* UPDATED: Use CSS variable */
+.app-wrapper .phone-wrapper .screen .call-wrapper h2 { margin: 0 0 20px 0; font-size: 14px; padding-left: 10px; color: var(--text-color-secondary); } /* UPDATED: Use CSS variable */
+.app-wrapper .phone-wrapper .screen .call-wrapper .number-input { border: 0; width: 100%; padding: 10px; margin-top: 25px; text-align: center; font-size: 1.5em; font-weight: 300; height: 60px; background-color: var(--card-bg-color); color: var(--text-color-primary); } /* UPDATED: Use CSS variables */
+.app-wrapper .phone-wrapper .screen .call-wrapper button { width: 100%; padding: 15px; background: var(--accent-color-green); border: 1px solid var(--accent-color-green); color: white; } /* UPDATED: Use CSS variable */
 .app-wrapper .phone-wrapper .screen .call-wrapper .dialer { width: 100%; height: auto; margin-bottom: 20px; overflow: hidden; }
-.app-wrapper .phone-wrapper .screen .call-wrapper .dialer-btn { float: left; width: 33.3333%; margin: 0; text-align: center; padding: 20px; background-color: lightgray; border-color: white; transition: all 0.5s ease-in-out; }
+.app-wrapper .phone-wrapper .screen .call-wrapper .dialer-btn { float: left; width: 33.3333%; margin: 0; text-align: center; padding: 20px; background-color: var(--card-bg-color); border-color: var(--divider-color); color: var(--text-color-primary); transition: all 0.5s ease-in-out; } /* UPDATED: Use CSS variables */
 .app-wrapper .phone-wrapper .screen .call-wrapper .dialer-btn:last-child { width: 100%; }
-.app-wrapper .phone-wrapper .screen .call-wrapper .dialer-btn:hover { transition: all 0.5s ease-in-out; cursor: pointer; background-color: #09af00; }
+.app-wrapper .phone-wrapper .screen .call-wrapper .dialer-btn:hover { transition: all 0.5s ease-in-out; cursor: pointer; background-color: var(--accent-color-green); color: white; } /* UPDATED: Use CSS variable */
 
 .app-wrapper .phone-wrapper .screen .twitter-wrapper,
 .app-wrapper .phone-wrapper .screen .send-tweet-wrapper { background-color: white; z-index: 10; }
@@ -609,11 +655,11 @@ button:focus {
 
 .app-wrapper .phone-wrapper .screen .services-wrapper { background-color: #e0e0e0; }
 .app-wrapper .phone-wrapper .screen .services-wrapper ul { list-style: none; padding: 10px; margin: 0; }
-.app-wrapper .phone-wrapper .screen .services-wrapper ul li button { float: left; cursor: pointer; background: orangered; color: white; padding: 15px; margin-bottom: 10px; margin-right: 5px; border: 1px solid orangered; width: calc(50% - 5px); border-radius: 3px; }
-.app-wrapper .phone-wrapper .screen .services-wrapper ul li button:hover { background-color: #01579b; border: 1px solid #01579b; }
+.app-wrapper .phone-wrapper .screen .services-wrapper ul li button { float: left; cursor: pointer; background: var(--accent-color-red); color: white; padding: 15px; margin-bottom: 10px; margin-right: 5px; border: 1px solid var(--accent-color-red); width: calc(50% - 5px); border-radius: 3px; } /* UPDATED: Use CSS variable */
+.app-wrapper .phone-wrapper .screen .services-wrapper ul li button:hover { background-color: var(--accent-color-blue); border: 1px solid var(--accent-color-blue); } /* UPDATED: Use CSS variable */
 .app-wrapper .phone-wrapper .screen .services-wrapper ul li button p { font-size: 12px; padding: 0; margin: 0; }
-.app-wrapper .phone-wrapper .screen .services-wrapper ul li .vpn-btn { position: absolute; right: 10px; bottom: 10px; background: gray; border: 1px solid gray; border-radius: 100px; padding: 5px; width: 39px; font-size: 12px; }
-.app-wrapper .phone-wrapper .screen .service-message-wrapper { background-color: white; }
+.app-wrapper .phone-wrapper .screen .services-wrapper ul li .vpn-btn { position: absolute; right: 10px; bottom: 10px; background: var(--text-color-secondary); border: 1px solid var(--text-color-secondary); border-radius: 100px; padding: 5px; width: 39px; font-size: 12px; } /* UPDATED: Use CSS variable */
+.app-wrapper .phone-wrapper .screen .service-message-wrapper { background-color: var(--bg-color); } /* UPDATED: Use CSS variable */
 .app-wrapper .phone-wrapper .screen .service-message-wrapper .service { display: block; overflow: hidden; }
 .app-wrapper .phone-wrapper .screen .service-message-wrapper ul { list-style: none; padding: 0; margin: 10px 0 0 0; }
 .app-wrapper .phone-wrapper .screen .service-message-wrapper ul li { padding: 10px 10px; border-bottom: 1px solid #9e9e9e; }
@@ -627,10 +673,71 @@ button:focus {
 .app-wrapper .phone-wrapper .screen .settings-wrapper { background-color: var(--bg-color); } /* NEW: Uses theme variable */
 /* settings header styles are covered by .one-ui-header */
 /* settings list styles are covered by common ul/li rules */
-.app-wrapper .phone-wrapper .screen .settings-wrapper button { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; background: #09af00; border: 1px solid #09af00; color: white; }
+/* Note: PLAN_SUMMARY mentions settings "Save" button was removed. This rule might be for other buttons if any. */
+.app-wrapper .phone-wrapper .screen .settings-wrapper button {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px;
+  background: var(--accent-color-green); /* UPDATED: Use CSS variable */
+  border: 1px solid var(--accent-color-green); /* UPDATED: Use CSS variable */
+  color: white;
+  transition: background-color 0.2s; /* NEW: Hover effect */
+}
+.app-wrapper .phone-wrapper .screen .settings-wrapper button:hover {
+  background: var(--accent-color-green-darker, #078c00); /* NEW: Hover effect, provide fallback if variable not defined */
+}
 .app-wrapper .phone-wrapper .screen .settings-wrapper ul { padding: 5px; margin: 0; }
-.app-wrapper .phone-wrapper .screen .settings-wrapper ul li p { position: relative; top: 5px; }
+.app-wrapper .phone-wrapper .screen .settings-wrapper ul li p { position: relative; top: 5px; margin-bottom: 8px; /* Ensure space for options below */ }
 .app-wrapper .phone-wrapper .screen .settings-wrapper ul li .toggleWrapper { position: absolute; top: 26px; right: 0; }
+
+/* NEW: Styles for Radio Button Group in Settings */
+.settings-wrapper .setting-option-group {
+  padding-top: 8px; /* Space between label <p> and options */
+  display: flex;
+  flex-direction: column; /* Stack radio options vertically */
+  gap: 4px; /* Space between radio options */
+}
+.settings-wrapper .radio-option {
+  display: flex;
+  align-items: center;
+  padding: 8px 0; /* Padding for each radio option row */
+}
+.settings-wrapper .radio-option input[type='radio'] {
+  margin-right: 12px; /* Space between radio button and its label */
+  /* Basic styling for radio button visibility, can be enhanced with custom One UI look */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-color-secondary);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.settings-wrapper .radio-option input[type='radio']:checked {
+  border-color: var(--accent-color-blue);
+  background-color: var(--accent-color-blue); /* Fill color when checked */
+}
+/* Optional: Dot inside the radio button when checked */
+.settings-wrapper .radio-option input[type='radio']:checked::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 3px; /* (20 - 4 - 10) / 2 if border is 2px */
+  background-color: var(--card-bg-color); /* Color of the inner dot */
+  border-radius: 50%;
+}
+.settings-wrapper .radio-option label {
+  font-size: 0.9rem; /* Consistent with other setting text */
+  color: var(--text-color-primary); /* Use primary text color for labels */
+  cursor: pointer;
+}
+/* End NEW Radio Button Styles */
+
 .app-wrapper .phone-wrapper .screen .settings-wrapper ul li ul { padding: 0; list-style: none; }
 .app-wrapper .phone-wrapper .screen .settings-wrapper ul li ul li { border: none; }
 .app-wrapper .phone-wrapper .screen .phone-call-active-wrapper { background-color: #121212; text-align: center; }
@@ -710,8 +817,11 @@ button:focus {
   justify-content: center;
   transition: top 0.5s ease-in-out;
   border-radius: 8px; /* Slightly rounded corners */
-  margin: 10px; /* Margin from edges */
-  width: calc(100% - 20px); /* Adjust width for margins */
+  /* margin: 10px; */ /* REMOVED: Margin was causing it to not be full width with calc */
+  /* width: calc(100% - 20px); */ /* REMOVED: Let it be full width of parent .screen */
+  left: 0; /* Ensure it aligns left */
+  width: 100%; /* Make it full width within .screen */
+  border-radius: 0; /* One UI toasts are typically not rounded or less rounded */
 }
 .error-wrapper.open {
   top: 10px; /* Slide into view */
