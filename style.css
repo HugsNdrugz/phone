@@ -14,6 +14,15 @@
   --accent-color-blue-rgb: 1, 87, 155; /* For box-shadow */
   --text-color-on-accent: #ffffff;
   --text-color-primary-rgb: 0,0,0; /* For nav-btn hover */
+
+  /* Clock Widget Variables */
+  --widget-clock-time-font-size: 48px;
+  --widget-clock-date-font-size: 14px;
+  --widget-clock-text-color: white;
+  --widget-clock-text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  --widget-clock-bg-color: transparent;
+  --widget-clock-padding: 0;
+  --widget-clock-margin-top: 40px;
 }
 
 .theme-dark {
@@ -385,21 +394,34 @@ textarea.oneui-text-input-direct {
 
 /* --- NEW: Clock Widget --- */
 .clock-widget {
-  color: white;
+  color: var(--widget-clock-text-color);
   text-align: center;
-  margin-top: 40px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  margin-top: var(--widget-clock-margin-top);
+  text-shadow: var(--widget-clock-text-shadow);
+  background-color: var(--widget-clock-bg-color);
+  padding: var(--widget-clock-padding);
 }
 .clock-widget .time {
-  font-size: 48px; /* 40sp in One UI guidelines */
+  font-size: var(--widget-clock-time-font-size); /* 40sp in One UI guidelines */
   font-weight: 300;
   margin-bottom: 5px;
 }
 .clock-widget .date {
-  font-size: 14px;
+  font-size: var(--widget-clock-date-font-size);
   font-weight: 400;
 }
 /* --- NEW: App Grid & Icons --- */
+.app-icon[draggable="true"] {
+    cursor: grab;
+}
+.app-icon.dragging {
+    opacity: 0.4;
+}
+.app-icon.drag-over {
+    border: 2px dashed #fff; /* Example style */
+    transform: scale(1.1);
+}
+
 /* Base App Grid Styles (Default to 4x4 if no specific class is applied, but explicit classes are preferred) */
 .app-grid {
   display: flex;

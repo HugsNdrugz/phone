@@ -59,9 +59,15 @@
 								<!-- App Grid -->
 								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
 									<button ng-repeat="app in homeScreenAppsPage1 track by app.id"
+													draggable="true"
 													class="app-icon"
 													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
-													ng-click="executeAppAction(app)">
+													ng-click="executeAppAction(app)"
+													ondragstart="handleDragStart(event, app.id, 1)"
+													ondragover="handleDragOver(event)"
+													ondragleave="handleDragLeave(event)"
+													ondrop="handleDrop(event, app.id, 1)"
+													ondragend="handleDragEnd(event)">
 										<i class="material-icons">{{app.iconName}}</i>
 										<span class="app-icon-label">{{app.name}}</span>
 									</button>
@@ -71,9 +77,15 @@
 							<div class="launcher-page">
 								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
 									<button ng-repeat="app in homeScreenAppsPage2 track by app.id"
+													draggable="true"
 													class="app-icon"
 													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
-													ng-click="executeAppAction(app)">
+													ng-click="executeAppAction(app)"
+													ondragstart="handleDragStart(event, app.id, 2)"
+													ondragover="handleDragOver(event)"
+													ondragleave="handleDragLeave(event)"
+													ondrop="handleDrop(event, app.id, 2)"
+													ondragend="handleDragEnd(event)">
 										<i class="material-icons">{{app.iconName}}</i>
 										<span class="app-icon-label">{{app.name}}</span>
 									</button>
@@ -183,6 +195,39 @@
 										<input type="radio" id="phoneSizeXLarge" name="phoneScreenSize" value="extra-large" ng-model="settings.screenSizeName" ng-change="updatePhoneSize()">
 										<label for="phoneSizeXLarge">Extra Large</label>
 									</div>
+								</div>
+							</li>
+							<!-- Clock Widget Styles -->
+							<li>
+								<p>Clock Widget Styles</p>
+								<div class="setting-option-group">
+									<!-- Time Font Size -->
+									<label for="clockTimeFontSize">Time Font Size (px):</label>
+									<input type="number" id="clockTimeFontSize" class="oneui-text-input" ng-model="settings.clockTimeFontSize" ng-change="updateClockWidgetStyles()">
+
+									<!-- Date Font Size -->
+									<label for="clockDateFontSize">Date Font Size (px):</label>
+									<input type="number" id="clockDateFontSize" class="oneui-text-input" ng-model="settings.clockDateFontSize" ng-change="updateClockWidgetStyles()">
+
+									<!-- Text Color -->
+									<label for="clockTextColor">Text Color (e.g., white, #FFFF00):</label>
+									<input type="text" id="clockTextColor" class="oneui-text-input" ng-model="settings.clockTextColor" ng-change="updateClockWidgetStyles()">
+
+									<!-- Text Shadow -->
+									<label for="clockTextShadow">Text Shadow (e.g., 0 2px 4px rgba(0,0,0,0.5)):</label>
+									<input type="text" id="clockTextShadow" class="oneui-text-input" ng-model="settings.clockTextShadow" ng-change="updateClockWidgetStyles()">
+
+									<!-- Background Color -->
+									<label for="clockBackgroundColor">Background Color (e.g., transparent, rgba(0,0,0,0.1)):</label>
+									<input type="text" id="clockBackgroundColor" class="oneui-text-input" ng-model="settings.clockBackgroundColor" ng-change="updateClockWidgetStyles()">
+
+									<!-- Padding (px) -->
+									<label for="clockPadding">Padding (px):</label>
+									<input type="number" id="clockPadding" class="oneui-text-input" ng-model="settings.clockPadding" ng-change="updateClockWidgetStyles()">
+
+									<!-- Margin Top (px) -->
+									<label for="clockMarginTop">Margin Top (px):</label>
+									<input type="number" id="clockMarginTop" class="oneui-text-input" ng-model="settings.clockMarginTop" ng-change="updateClockWidgetStyles()">
 								</div>
 							</li>
 							<!-- Other settings can be added here -->

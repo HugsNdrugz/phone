@@ -169,6 +169,14 @@ app.controller("ctrl", function($scope, $timeout) {
     $scope.settings.appGridSize = '4x4'; // Default app grid size
     $scope.settings.screenSizeName = 'large'; // Default phone display size
     $scope.settings.iconSize = 'medium'; // Default app icon size
+    // Clock Widget Settings
+    $scope.settings.clockTimeFontSize = '48';
+    $scope.settings.clockDateFontSize = '14';
+    $scope.settings.clockTextColor = 'white';
+    $scope.settings.clockTextShadow = '0 2px 4px rgba(0,0,0,0.5)';
+    $scope.settings.clockBackgroundColor = 'transparent';
+    $scope.settings.clockPadding = '0';
+    $scope.settings.clockMarginTop = '40';
 
     // --- Core Application Functions ---
 
@@ -421,6 +429,23 @@ app.controller("ctrl", function($scope, $timeout) {
         $scope.toggleView('error', 'App icon size set to ' + $scope.settings.iconSize);
     };
 
+    // NEW: Updates clock widget styles
+    $scope.updateClockWidgetStyles = function() {
+        document.documentElement.style.setProperty('--widget-clock-time-font-size', $scope.settings.clockTimeFontSize + 'px');
+        document.documentElement.style.setProperty('--widget-clock-date-font-size', $scope.settings.clockDateFontSize + 'px');
+        document.documentElement.style.setProperty('--widget-clock-text-color', $scope.settings.clockTextColor);
+        document.documentElement.style.setProperty('--widget-clock-text-shadow', $scope.settings.clockTextShadow);
+        document.documentElement.style.setProperty('--widget-clock-bg-color', $scope.settings.clockBackgroundColor);
+        document.documentElement.style.setProperty('--widget-clock-padding', $scope.settings.clockPadding + 'px');
+        document.documentElement.style.setProperty('--widget-clock-margin-top', $scope.settings.clockMarginTop + 'px');
+        // Optional: Provide feedback. This might be too noisy if called on every ng-change.
+        // Consider adding a debounce or a manual "apply" button if it is.
+        $scope.toggleView('error', 'Clock style updated');
+    };
+
+    // Call initially to set the clock styles from default settings
+    $scope.updateClockWidgetStyles();
+
     // Saves the current phone settings
     $scope.saveSettings = function() {
         // Apply phone size changes based on selected radio button - This is now handled by updatePhoneSize directly via ng-change
@@ -437,6 +462,13 @@ app.controller("ctrl", function($scope, $timeout) {
         console.log("  Phone Size:", $scope.settings.screenSizeName); // UPDATED
         console.log("  App Grid Size:", $scope.settings.appGridSize);
         console.log("  App Icon Size:", $scope.settings.iconSize); // Added for logging
+        console.log("  Clock Time Font Size:", $scope.settings.clockTimeFontSize + 'px');
+        console.log("  Clock Date Font Size:", $scope.settings.clockDateFontSize + 'px');
+        console.log("  Clock Text Color:", $scope.settings.clockTextColor);
+        console.log("  Clock Text Shadow:", $scope.settings.clockTextShadow);
+        console.log("  Clock Background Color:", $scope.settings.clockBackgroundColor);
+        console.log("  Clock Padding:", $scope.settings.clockPadding + 'px');
+        console.log("  Clock Margin Top:", $scope.settings.clockMarginTop + 'px');
 
         // Provide feedback to the user that settings have been saved
         $scope.toggleView('error', 'Settings (debug log) Saved!'); // Changed message as it's more of a log now
@@ -467,3 +499,97 @@ app.controller("ctrl", function($scope, $timeout) {
         { id: 5, message: "Maybe later! This UI is taking up all my time.", creator: "2093533313", timestamp: "13383855383" }
     ];
 });
+
+// --- Global Drag and Drop Handlers ---
+var draggedAppId = null;
+var draggedAppOriginPage = null;
+var draggedAppElement = null; // To reset style on dragend
+
+function handleDragStart(event, appId, pageNumber) {
+    const scope = angular.element(document.getElementById('phone-wrapper')).scope();
+    draggedAppId = appId;
+    draggedAppOriginPage = pageNumber;
+    draggedAppElement = event.target.closest('.app-icon');
+    event.dataTransfer.setData('text/plain', appId);
+    if (draggedAppElement) {
+        draggedAppElement.classList.add('dragging');
+    }
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    const targetIcon = event.target.closest('.app-icon');
+    if (targetIcon) {
+        targetIcon.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(event) {
+    const targetIcon = event.target.closest('.app-icon');
+    if (targetIcon) {
+        targetIcon.classList.remove('drag-over');
+    }
+}
+
+function handleDrop(event, targetAppId, targetPageNumber) {
+    event.preventDefault();
+    const scope = angular.element(document.getElementById('phone-wrapper')).scope();
+    const targetIcon = event.target.closest('.app-icon');
+    if (targetIcon) {
+        targetIcon.classList.remove('drag-over');
+    }
+
+    if (!draggedAppId || draggedAppId === targetAppId) {
+        if (draggedAppElement) draggedAppElement.classList.remove('dragging');
+        draggedAppId = null;
+        draggedAppOriginPage = null;
+        draggedAppElement = null;
+        return;
+    }
+
+    let sourceApps = draggedAppOriginPage === 1 ? scope.homeScreenAppsPage1 : scope.homeScreenAppsPage2;
+    let targetApps = targetPageNumber === 1 ? scope.homeScreenAppsPage1 : scope.homeScreenAppsPage2;
+
+    let draggedItemIndex = sourceApps.findIndex(app => app.id === draggedAppId);
+    let targetItemIndex = targetApps.findIndex(app => app.id === targetAppId);
+
+    if (draggedItemIndex === -1 || targetItemIndex === -1) {
+        if (draggedAppElement) draggedAppElement.classList.remove('dragging');
+        draggedAppId = null;
+        draggedAppOriginPage = null;
+        draggedAppElement = null;
+        return;
+    }
+
+    // Perform the move
+    const [draggedItem] = sourceApps.splice(draggedItemIndex, 1);
+    targetApps.splice(targetItemIndex, 0, draggedItem);
+
+    scope.$apply(); // Crucial for Angular to update the DOM
+
+    if (draggedAppElement) draggedAppElement.classList.remove('dragging');
+    draggedAppId = null;
+    draggedAppOriginPage = null;
+    draggedAppElement = null;
+    scope.toggleView('error', 'App position changed!');
+}
+
+function handleDragEnd(event) {
+    if (draggedAppElement) {
+        draggedAppElement.classList.remove('dragging');
+    }
+    // Clean up any remaining drag-over classes if drop occurred outside a valid target
+    document.querySelectorAll('.app-icon.drag-over').forEach(icon => icon.classList.remove('drag-over'));
+
+    draggedAppId = null;
+    draggedAppOriginPage = null;
+    draggedAppElement = null;
+}
+
+// Ensure these functions are accessible globally, e.g., by attaching to window if necessary,
+// though in a simple script like this, they are already global.
+// window.handleDragStart = handleDragStart;
+// window.handleDragOver = handleDragOver;
+// window.handleDragLeave = handleDragLeave;
+// window.handleDrop = handleDrop;
+// window.handleDragEnd = handleDragEnd;
