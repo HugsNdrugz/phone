@@ -88,7 +88,7 @@
 							<h1>Contacts</h1>
 							<h2>Contacts</h2>
 						</div>
-						<ul class="scroll-content" on-scroll-event="handleScroll('contacts')">
+						<ul class="scroll-content" on-scroll-event="handleScroll('contacts', scrollTop)">
 							<li ng-repeat="contact in contacts track by contact.id" ng-click="toggleView('textMessage', contact)">
 								<p class="name">{{contact.first_name}} {{contact.last_name}}</p>
 								<p class="number">{{contact.phone_number}}</p>
@@ -107,7 +107,7 @@
 							<h1>Settings</h1>
 							<h2>Settings</h2>
 						</div>
-						<ul class="scroll-content" on-scroll-event="handleScroll('settings')">
+						<ul class="scroll-content" on-scroll-event="handleScroll('settings', scrollTop)">
 							<li>
 								<p>Dark Mode</p>
 								<div class="toggleWrapper">
@@ -128,11 +128,11 @@
 
 					<!-- Call App View (Placeholder for full One UI design) -->
 					<div class="app-view call-wrapper" ng-class="{ 'open': callToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': callHeaderCollapsed}">
 							<h1>Phone</h1>
 							<h2>Phone</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content" on-scroll-event="handleScroll('call', scrollTop)">
 							<i class="material-icons add-contact" ng-click="toggleView('addContact')">add_circle</i>
 							<input class="number-input" type="tel" placeholder="enter number" ng-model="call_phone_number" readonly/>
 							<div class="dialer">
@@ -151,15 +151,16 @@
 						</div>
 					</div>
 
-					<!-- Messages App View (Placeholder for full One UI design) -->
+					<!-- Messages App View -->
 					<div class="app-view messages-wrapper" ng-class="{ 'open': messagesToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': messagesHeaderCollapsed}">
 							<h1>Messages</h1>
 							<h2>Messages</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content" on-scroll-event="handleScroll('messages', scrollTop)">
 							<i class="material-icons add-contact" ng-click="toggleView('newMessage')">add_circle</i>
-							<h2>{{contacts.length}} conversations</h2>
+							<!-- Consider if this h2 should be part of the scroll content or styled differently -->
+							<h2 style="padding: 0 16px; font-size: 1rem; color: var(--text-color-secondary);">{{contacts.length}} conversations</h2>
 							<ul>
 								<li ng-repeat="contact in contacts" ng-click="toggleView('textMessage', contact)">
 									<p class="name">{{contact.first_name || contact.phone_number}}</p>
@@ -172,13 +173,13 @@
 						</div>
 					</div>
 
-					<!-- Services App View (Placeholder for full One UI design) -->
+					<!-- Services App View -->
 					<div class="app-view services-wrapper" ng-class="{ 'open': servicesToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': servicesHeaderCollapsed}">
 							<h1>Services</h1>
 							<h2>Services</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content" on-scroll-event="handleScroll('services', scrollTop)">
 							<ul>
 								<li>
 									<button ng-click="toggleView('serviceMessage', 'Taxi')">
@@ -213,13 +214,13 @@
 						</div>
 					</div>
 					
-					<!-- Twitter App View (Placeholder for full One UI design) -->
+					<!-- Twitter App View -->
 					<div class="app-view twitter-wrapper" ng-class="{ 'open': twitterToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': twitterHeaderCollapsed}">
 							<h1>Twitter</h1>
 							<h2>Twitter</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content" on-scroll-event="handleScroll('twitter', scrollTop)">
 							<i class="material-icons send-tweet" ng-click="toggleView('sendTweet')">send</i>
 							<div class="tweets">
 								<div class="tweet">
@@ -245,13 +246,13 @@
 						</div>
 					</div>
 
-					<!-- Other remaining app views (not yet One UI styled, but included for completeness) -->
+					<!-- Other remaining app views (now being converted to One UI header) -->
 					<div class="app-view service-message-wrapper" ng-class="{ 'open': serviceMessageToggle }">
-						<div class="one-ui-header">
-							<h1>{{serviceName}}</h1>
-							<h2>{{serviceName}}</h2>
+						<div class="one-ui-header" ng-class="{'collapsed': serviceMessageHeaderCollapsed}">
+							<h1>{{serviceName || 'Service'}}</h1>
+							<h2>{{serviceName || 'Service'}}</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content" on-scroll-event="handleScroll('serviceMessage', scrollTop)">
 							<div class="service" ng-switch="serviceName">
 								<div ng-switch-when="Taxi">
 									<ul>
@@ -310,13 +311,15 @@
 					</div>
 					
 					<div class="app-view phone-call-active-wrapper" ng-class="{ 'open': phoneCallActiveToggle }">
-						<div class="one-ui-header">
+						<!-- This view is full-screen and does not use the standard expandable header -->
+						<!-- Keeping its existing structure, but ensuring scroll-content if needed, though likely not for this specific UI -->
+						<div class="one-ui-header" style="display:none;"> <!-- Hidden but there for consistency if ever needed -->
 							<h1>Call Active</h1>
 							<h2>Call Active</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content"> <!-- Or just directly the content if no scrolling is ever expected -->
 							<i class="material-icons back-from-call" ng-click="toggleView('calling')">arrow_back_ios</i>
-							<i class="material-icons">phone_in_talk</i>
+							<i class="material-icons main-call-icon">phone_in_talk</i>
 							<p>{{callingName || 'Unknown'}}</p>
 							<p>{{callStatus}}</p>
 							<button class="answer-btn" ng-hide="callStatus === 'outgoing'">Answer</button>
@@ -325,16 +328,15 @@
 					</div>
 					
 					<div class="app-view text-convo-wrapper" ng-class="{ 'open': textMessageToggle }">
-						<header>
-							<h1>
-								<i class="material-icons" ng-click="toggleView('textMessage')">arrow_back_ios</i>
-								<div class="name-wrap">
-									<span>{{activeContact.first_name || 'Unknown Contact'}}</span>
-									<span>{{activeContact.phone_number}}</span>
-								</div>
-							</h1>
-						</header>
-						<div class="conversation-wrapper">
+						<div class="one-ui-header" ng-class="{'collapsed': textMessageHeaderCollapsed}">
+							<!-- Back button integrated into header for One UI style -->
+							<i class="material-icons" ng-click="toggleView('textMessage')" style="position:absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index:11; font-size:1.5rem; color:var(--icon-color-primary); cursor:pointer;" ng-show="textMessageHeaderCollapsed">arrow_back_ios</i>
+							<h1>{{activeContact.first_name || 'Unknown'}}</h1>
+							<h2>{{activeContact.first_name || 'Unknown'}}</h2>
+							<!-- Optional: Subtitle for phone number in expanded header -->
+							<p ng-if="!textMessageHeaderCollapsed" style="font-size: 0.875rem; color: var(--text-color-secondary); position: absolute; bottom: -4px; left: 16px; opacity:0.7;">{{activeContact.phone_number}}</p>
+						</div>
+						<div class="conversation-wrapper scroll-content" on-scroll-event="handleScroll('textMessage', scrollTop)">
 							<div ng-repeat="message in messages">
 								<div ng-class="{ 'send': myNumber === message.creator, 'recieve': myNumber != message.creator }">
 									<div class="text-wrap">
@@ -353,37 +355,39 @@
 					</div>
 					
 					<div class="app-view new-convo-wrapper" ng-class="{ 'open': newMessageToggle }">
-						<header>
-							<h1>
-								<i class="material-icons" ng-click="toggleView('newMessage')">arrow_back_ios</i> New Message
-							</h1>
-						</header>
-						<div class="send-message-wrapper">
-							<input type="tel" placeholder="Enter Number" maxlength="10" ng-model="newConversation.number" />
-							<textarea placeholder="Enter Message Here..." maxlength="300" ng-model="newConversation.text"></textarea>
-							<button ng-click="sendNewMessage()">
-								<i class="material-icons">send</i>
-							</button>
+						<div class="one-ui-header" ng-class="{'collapsed': newMessageHeaderCollapsed}">
+                             <i class="material-icons" ng-click="toggleView('newMessage')" style="position:absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index:11; font-size:1.5rem; color:var(--icon-color-primary); cursor:pointer;" ng-show="newMessageHeaderCollapsed">arrow_back_ios</i>
+							<h1>New Message</h1>
+							<h2>New Message</h2>
+						</div>
+						<div class="scroll-content" on-scroll-event="handleScroll('newMessage', scrollTop)">
+							<div class="send-message-inner-content" style="padding:16px;">
+								<input type="tel" placeholder="Enter Number" maxlength="10" ng-model="newConversation.number" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid var(--divider-color); border-radius:6px; background:var(--surface-bg-color);"/>
+								<textarea placeholder="Enter Message Here..." maxlength="300" ng-model="newConversation.text" style="width:100%; height: 200px; padding:10px; border:1px solid var(--divider-color); border-radius:6px; background:var(--surface-bg-color);"></textarea>
+								<button ng-click="sendNewMessage()" style="width:100%; padding:12px; margin-top:10px; background:var(--accent-color-primary); color:var(--text-color-on-accent); border:none; border-radius:6px; font-weight:500;">
+									Send
+								</button>
+							</div>
 						</div>
 					</div>
 					
 					<div class="app-view send-tweet-wrapper" ng-class="{ 'open': sendTweetToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': sendTweetHeaderCollapsed}">
 							<h1>New Tweet</h1>
 							<h2>New Tweet</h2>
 						</div>
-						<div class="scroll-content">
-							<button class="tweet-btn" ng-click="toggleView('sendTweet')">Tweet</button>
-							<textarea placeholder="whats happening?" maxlength="300"></textarea>
+						<div class="scroll-content" on-scroll-event="handleScroll('sendTweet', scrollTop)">
+							<textarea placeholder="whats happening?" maxlength="300" style="height: calc(100% - 70px); /* Adjust based on button */"></textarea>
+							<button class="tweet-btn" ng-click="toggleView('sendTweet')" style="position:absolute; bottom:16px; right:16px; margin:0;">Tweet</button>
 						</div>
 					</div>
 					
 					<div class="app-view add-contact-wrapper" ng-class="{ 'open': addContactToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': addContactHeaderCollapsed}">
 							<h1>Add Contact</h1>
 							<h2>Add Contact</h2>
 						</div>
-						<div class="scroll-content">
+						<div class="scroll-content" on-scroll-event="handleScroll('addContact', scrollTop)">
 							<input type="text" placeholder="First Name" ng-model="newContact.first_name" pattern="[a-zA-Z0-9]+"/>
 							<input type="text" placeholder="Last Name" ng-model="newContact.last_name" pattern="[a-zA-Z0-9]+"/>
 							<input type="tel" placeholder="Phone Number" ng-model="newContact.phone_number" maxlength="10"/>
@@ -392,12 +396,12 @@
 					</div>
 					
 					<div class="app-view life-alert-wrapper" ng-class="{ 'open': lifeAlertToggle }">
-						<div class="one-ui-header">
+						<div class="one-ui-header" ng-class="{'collapsed': lifeAlertHeaderCollapsed}">
 							<h1>Life Alert</h1>
 							<h2>Life Alert</h2>
 						</div>
-						<div class="scroll-content">
-							<h1>LIFE ALERT!</h1>
+						<div class="scroll-content" on-scroll-event="handleScroll('lifeAlert', scrollTop)">
+							<h1 style="text-align:center; margin-top:24px; font-size: 1.75rem;">LIFE ALERT!</h1>
 							<button>
 								<p>Request an Ambulance</p>
 								<strong>(You will remember everything)</strong>
