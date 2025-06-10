@@ -2,7 +2,6 @@
 :root {
   --bg-color: #f0f2f5;
   --card-bg-color: #ffffff;
-  --card-bg-color-rgb: 255,255,255;
   --surface-bg-color: #f8f9fa; /* Slightly off-white for input backgrounds, if needed */
   --text-color-primary: #000000;
   --text-color-secondary: #555555;
@@ -20,7 +19,6 @@
 .theme-dark {
   --bg-color: #121212;
   --card-bg-color: #1e1e1e;
-  --card-bg-color-rgb: 30,30,30;
   --surface-bg-color: #2c2c2c; /* Darker surface for inputs in dark mode */
   --text-color-primary: #ffffff;
   --text-color-secondary: #bbbbbb;
@@ -387,59 +385,11 @@ textarea.oneui-text-input-direct {
 
 /* --- NEW: Clock Widget --- */
 .clock-widget {
-  color: white; /* Default color, will be overridden by look-* classes */
+  color: white;
   text-align: center;
-  margin-top: 40px; /* Base margin, can be adjusted by specific background class */
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Default shadow, will be overridden by look-* classes */
-  transition: background-color 0.3s, padding 0.3s, margin-top 0.3s, color 0.3s, text-shadow 0.3s; /* Smooth transitions */
+  margin-top: 40px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
-
-/* Default look (matches old default, white text with shadow) */
-.clock-widget.clock-look-default .time,
-.clock-widget.clock-look-default .date,
-/* Apply default also if no specific look class is present, ensuring base .clock-widget styles are correctly applied or overridden */
-.clock-widget:not([class*="clock-look-"]) .time,
-.clock-widget:not([class*="clock-look-"]) .date {
-  color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-}
-
-/* Dark text, no shadow (for light/transparent backgrounds) */
-.clock-widget.clock-look-transparent-dark .time,
-.clock-widget.clock-look-transparent-dark .date {
-  color: var(--text-color-primary);
-  text-shadow: none;
-}
-
-/* Light text, no shadow (for dark/transparent backgrounds or when shadow is undesirable) */
-.clock-widget.clock-look-transparent-light .time,
-.clock-widget.clock-look-transparent-light .date {
-  color: white;
-  text-shadow: none;
-}
-
-/* Clock Background Styles */
-.clock-widget.clock-bg-none {
-  background-color: transparent;
-  padding: 0;
-}
-
-.clock-widget.clock-bg-subtle-card {
-  background-color: rgba(var(--card-bg-color-rgb), 0.1);
-  padding: 8px 16px;
-  border-radius: 16px;
-  margin-top: 30px;
-  margin-bottom: 10px;
-}
-/* Ensure text styles are reapplied if card makes text hard to read with default shadow */
-.clock-widget.clock-bg-subtle-card.clock-look-default .time,
-.clock-widget.clock-bg-subtle-card.clock-look-default .date {
-    /* If card is light, default white text with shadow might be fine.
-       If card is dark (in dark theme), white text with shadow is also fine.
-       This rule is mostly for specificity if needed, but current setup should be okay. */
-}
-
-
 .clock-widget .time {
   font-size: 48px; /* 40sp in One UI guidelines */
   font-weight: 300;
@@ -459,121 +409,153 @@ textarea.oneui-text-input-direct {
   gap: 15px;
   margin-top: 30px;
 }
-/* Default App Icon styles - This is now the main button element again */
+/* Default App Icon styles - these will be overridden by grid-specific styles below */
 .app-icon {
+  width: 50px; /* Fallback/default icon width - will be overridden by grid specific */
+  height: auto; /* UPDATED: Height will be defined by content (icon + label) and padding */
+  /* min-height: 60px; */ /* Consider a min-height if needed, depends on label visibility */
+  border-radius: 12px; /* Fallback/default border radius - will be overridden */
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* UPDATED: Stack icon and label vertically */
   align-items: center;
-  justify-content: center; /* UPDATED: Center content vertically */
-  color: white; /* Default text/icon color within the button */
+  /* justify-content: center; */ /* REMOVED: We want icon towards top, label towards bottom */
+  justify-content: flex-start; /* Align icon to top, label will be pushed by margin or fixed height */
+  color: white;
   cursor: pointer;
+  padding: 8px 4px; /* UPDATED: Padding for icon and label */
   border: none;
-  background-color: transparent; /* Base background, colorClass will override */
-  /* Overall sizing (width, min-height, padding, border-radius) will be done by icon-size-XXX classes */
-  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease, min-height 0.2s ease, padding 0.2s ease;
+  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease; /* Added width/height transition */
 }
 .app-icon:hover {
   transform: scale(1.1);
 }
-
-.app-icon i.material-icons {
+.app-icon i.material-icons { /* More specific selector */
+  font-size: 28px; /* Fallback/default icon font size - will be overridden */
+  transition: font-size 0.2s ease; /* Added font-size transition */
+  /* margin-bottom: 4px; */ /* Space between icon and label - or label margin-top */
   width: 100%; /* Ensure icon can be centered if it's smaller than container */
   text-align: center; /* Center icon text */
-  transition: font-size 0.2s ease; /* For icon size transitions */
-  /* font-size will be set by icon-size-XXX classes */
-  /* margin-bottom will be set by icon-size-XXX classes */
 }
 
-.app-icon .app-icon-label { /* Targeting the span inside the button */
+.app-icon-label {
+  font-size: 12px;
   color: white;
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
+  max-width: 100%; /* Label can take full width of padded button.app-icon */
   text-align: center;
   line-height: 1.2;
-  /* font-size and margin-top will be set by icon-size-XXX classes */
-  transition: font-size 0.2s ease, margin-top 0.2s ease;
+  margin-top: 6px; /* Space between icon and label */
+  /* position: absolute; */ /* If we want to fix label to bottom */
+  /* bottom: 4px; */
 }
 
 
-/* Grid 4x3 and 4x4 Styles - Only for layout */
+/* Grid 4x3 and 4x4 Styles */
 .app-grid.grid-43,
 .app-grid.grid-44 {
-  gap: 10px;
+  gap: 10px; /* Adjusted gap for 4 columns */
+  /* Sizing is now handled by .icon-size-XXX classes */
 }
+/* .app-grid.grid-43 .app-icon, */ /* REMOVED specific width/height/padding from here */
+/* .app-grid.grid-44 .app-icon { */
+  /* width: 45px; */
+  /* height: auto; */
+  /* min-height: 55px; */
+  /* border-radius: 10px; */
+  /* padding: 6px 2px; */
+/* } */
+/* .app-grid.grid-43 .app-icon i.material-icons, */ /* REMOVED specific font-size from here */
+/* .app-grid.grid-44 .app-icon i.material-icons { */
+  /* font-size: 24px; */
+/* } */
+/* .app-grid.grid-43 .app-icon .app-icon-label, */ /* REMOVED specific font-size from here */
+/* .app-grid.grid-44 .app-icon .app-icon-label { */
+  /* font-size: 11px; */
+  /* margin-top: 4px; */
+/* } */
 
-/* Grid 5x4 Styles - Only for layout */
+
+/* Grid 5x4 Styles */
 .app-grid.grid-54 {
-  gap: 8px;
+  gap: 8px; /* Adjusted gap for 5 columns */
+  /* Sizing is now handled by .icon-size-XXX classes */
 }
+/* .app-grid.grid-54 .app-icon { */ /* REMOVED specific width/height/padding from here */
+  /* width: 35px; */
+  /* height: auto; */
+  /* min-height: 45px; */
+  /* border-radius: 8px; */
+  /* padding: 4px 2px; */
+/* } */
+/* .app-grid.grid-54 .app-icon i.material-icons { */ /* REMOVED specific font-size from here */
+  /* font-size: 20px; */
+/* } */
+/* .app-grid.grid-54 .app-icon .app-icon-label { */ /* REMOVED specific font-size from here */
+  /* font-size: 10px; */
+  /* margin-top: 3px; */
+/* } */
 
 
-/* --- App Icon Size Classes (Applied to .app-icon button itself) --- */
+/* --- NEW: App Icon Size Classes --- */
 .app-icon.icon-size-small {
   width: 35px;
-  min-height: 50px;
-  padding: 6px 2px; /* Padding for internal spacing of icon and label */
-  border-radius: 8px;
+  min-height: 50px; /* Approx 35px icon + 15px label+spacing */
+  padding: 6px 2px;
+  border-radius: 8px; /* Consistent with smaller size */
 }
 .app-icon.icon-size-small i.material-icons {
   font-size: 20px;
-  margin-bottom: 2px; /* Space between icon and label */
 }
 .app-icon.icon-size-small .app-icon-label {
   font-size: 10px;
-  margin-top: 0; /* UPDATED: Rely on icon margin-bottom & padding */
+  margin-top: 3px;
 }
 
 .app-icon.icon-size-medium {
   width: 45px;
-  min-height: 60px;
+  min-height: 60px; /* Approx 45px icon + 15px label+spacing */
   padding: 8px 4px;
-  border-radius: 10px;
+  border-radius: 10px; /* Consistent with medium size */
 }
 .app-icon.icon-size-medium i.material-icons {
   font-size: 24px;
-  margin-bottom: 4px;
 }
 .app-icon.icon-size-medium .app-icon-label {
   font-size: 11px;
-  margin-top: 0; /* UPDATED: Rely on icon margin-bottom & padding */
+  margin-top: 4px;
 }
 
 .app-icon.icon-size-large {
   width: 55px;
-  min-height: 70px;
+  min-height: 70px; /* Approx 55px icon + 15px label+spacing */
   padding: 10px 4px;
-  border-radius: 12px;
+  border-radius: 12px; /* Consistent with larger size */
 }
 .app-icon.icon-size-large i.material-icons {
   font-size: 28px;
-  margin-bottom: 5px;
 }
 .app-icon.icon-size-large .app-icon-label {
   font-size: 12px;
-  margin-top: 0; /* UPDATED: Rely on icon margin-bottom & padding */
+  margin-top: 5px;
 }
 /* End App Icon Size Classes */
 
-/* App Icon Specific Colors (Applied to .app-icon button now) */
+/* App Icon Specific Colors */
 .app-icon.phone { background-color: #09af00; }
 .app-icon.contacts { background-color: #009688; }
 .app-icon.message { background-color: #4a26fd; }
 .app-icon.services { background-color: #e64a19; }
 .app-icon.settings { background-color: #9e9e9e; }
-.app-icon.twitter {
+.app-icon.twitter { 
     background-color: white; 
     background-image: url("http://www.stickpng.com/assets/images/580b57fcd9996e24bc43c53e.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.app-icon.twitter i.material-icons { /* If using Material Icon text for twitter */
-    color: transparent; /* Hide the flutter_dash text if background image is desired */
-}
-
 
 /* --- REFACTORED: App View Common Styles (All slide-up apps) --- */
 .app-view {
