@@ -170,13 +170,13 @@ app.controller("ctrl", function($scope, $timeout) {
     $scope.settings.screenSizeName = 'large'; // Default phone display size
     $scope.settings.iconSize = 'medium'; // Default app icon size
     // Clock Widget Settings
-    $scope.settings.clockTimeFontSize = '48';
-    $scope.settings.clockDateFontSize = '14';
+    $scope.settings.clockTimeFontSize = 48;
+    $scope.settings.clockDateFontSize = 14;
     $scope.settings.clockTextColor = 'white';
     $scope.settings.clockTextShadow = '0 2px 4px rgba(0,0,0,0.5)';
     $scope.settings.clockBackgroundColor = 'transparent';
-    $scope.settings.clockPadding = '0';
-    $scope.settings.clockMarginTop = '40';
+    $scope.settings.clockPadding = 0;
+    $scope.settings.clockMarginTop = 40;
 
     // --- Core Application Functions ---
 
