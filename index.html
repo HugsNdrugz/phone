@@ -58,25 +58,23 @@
 								</div>
 								<!-- App Grid -->
 								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
-									<button ng-repeat="app in homeScreenAppsPage1 track by app.id"
-													class="app-icon"
-													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
-													ng-click="executeAppAction(app)">
-										<i class="material-icons">{{app.iconName}}</i>
+									<div class="app-icon-wrapper" ng-repeat="app in homeScreenAppsPage1 track by app.id" ng-class="['icon-size-' + settings.iconSize]">
+										<button class="app-icon-graphic" ng-class="[app.colorClass]" ng-click="executeAppAction(app)">
+											<i class="material-icons">{{app.iconName}}</i>
+										</button>
 										<span class="app-icon-label">{{app.name}}</span>
-									</button>
+									</div>
 								</div>
 							</div>
 							<!-- Launcher Page 2 -->
 							<div class="launcher-page">
 								<div class="app-grid" ng-class="['grid-' + settings.appGridSize.replace('x', '')]">
-									<button ng-repeat="app in homeScreenAppsPage2 track by app.id"
-													class="app-icon"
-													ng-class="[app.colorClass, 'icon-size-' + settings.iconSize]"
-													ng-click="executeAppAction(app)">
-										<i class="material-icons">{{app.iconName}}</i>
+									<div class="app-icon-wrapper" ng-repeat="app in homeScreenAppsPage2 track by app.id" ng-class="['icon-size-' + settings.iconSize]">
+										<button class="app-icon-graphic" ng-class="[app.colorClass]" ng-click="executeAppAction(app)">
+											<i class="material-icons">{{app.iconName}}</i>
+										</button>
 										<span class="app-icon-label">{{app.name}}</span>
-									</button>
+									</div>
 								</div>
 							</div>
 						</div>

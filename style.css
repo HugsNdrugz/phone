@@ -451,51 +451,38 @@ textarea.oneui-text-input-direct {
   gap: 15px;
   margin-top: 30px;
 }
-/* Default App Icon styles have been restructured */
-/* .app-icon is no longer used as the main repeated element */
-
-/* NEW: Wrapper for each app icon unit (graphic + label) */
-.app-icon-wrapper {
+/* Default App Icon styles - This is now the main button element again */
+.app-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: center; */ /* Let content determine height distribution for now */
-  /* Overall sizing (width, min-height, padding) will be done by icon-size-XXX classes */
-  transition: transform 0.2s ease; /* Keep hover transform on wrapper */
+  justify-content: flex-start; /* Align icon to top, label will be spaced with margin */
+  color: white; /* Default text/icon color within the button */
+  cursor: pointer;
+  border: none;
+  background-color: transparent; /* Base background, colorClass will override */
+  /* Overall sizing (width, min-height, padding, border-radius) will be done by icon-size-XXX classes */
+  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease, min-height 0.2s ease, padding 0.2s ease;
 }
-.app-icon-wrapper:hover {
+.app-icon:hover {
   transform: scale(1.1);
 }
 
-/* NEW: Clickable graphic part of the icon */
-.app-icon-graphic {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white; /* Default icon color, can be overridden by specific app styles if needed */
-  cursor: pointer;
-  border: none;
-  padding: 0; /* Remove button padding, sizing via width/height */
-  background-color: transparent; /* Base background, colorClass will override */
-  /* Width, height, border-radius will be set by icon-size-XXX classes */
-  transition: background-color 0.2s ease, box-shadow 0.2s ease; /* For potential future hover effects on graphic */
-}
-/* Ensure material icons inside the graphic button are sized by parent's font-size or specific rules */
-.app-icon-graphic i.material-icons {
+.app-icon i.material-icons {
   width: 100%; /* Ensure icon can be centered if it's smaller than container */
   text-align: center; /* Center icon text */
   transition: font-size 0.2s ease; /* For icon size transitions */
   /* font-size will be set by icon-size-XXX classes */
+  /* margin-bottom will be set by icon-size-XXX classes */
 }
 
-/* NEW: Label style, now a direct child of .app-icon-wrapper */
-.app-icon-label {
-  color: white; /* Assuming labels are always white on app launcher background */
+.app-icon .app-icon-label { /* Targeting the span inside the button */
+  color: white;
   text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%; /* Takes width of .app-icon-wrapper (which is sized by icon-size-XXX) */
+  width: 100%;
   text-align: center;
   line-height: 1.2;
   /* font-size and margin-top will be set by icon-size-XXX classes */
@@ -515,80 +502,67 @@ textarea.oneui-text-input-direct {
 }
 
 
-/* --- App Icon Size Classes (Applied to .app-icon-wrapper) --- */
-.app-icon-wrapper.icon-size-small {
-  width: 35px; /* Overall width of the icon unit */
+/* --- App Icon Size Classes (Applied to .app-icon button itself) --- */
+.app-icon.icon-size-small {
+  width: 35px;
   min-height: 50px;
-  padding: 0; /* Wrapper padding removed, graphic/label will manage internal space */
-}
-.app-icon-wrapper.icon-size-small .app-icon-graphic {
-  width: 35px; /* Graphic button takes full width of wrapper */
-  height: 35px;
+  padding: 6px 2px; /* Padding for internal spacing of icon and label */
   border-radius: 8px;
 }
-.app-icon-wrapper.icon-size-small .app-icon-graphic i.material-icons {
+.app-icon.icon-size-small i.material-icons {
   font-size: 20px;
+  margin-bottom: 2px; /* Space between icon and label */
 }
-.app-icon-wrapper.icon-size-small .app-icon-label {
+.app-icon.icon-size-small .app-icon-label {
   font-size: 10px;
-  margin-top: 3px;
+  margin-top: 2px; /* Adjusted from previous label-only margin */
 }
 
-.app-icon-wrapper.icon-size-medium {
+.app-icon.icon-size-medium {
   width: 45px;
   min-height: 60px;
-  padding: 0;
-}
-.app-icon-wrapper.icon-size-medium .app-icon-graphic {
-  width: 45px;
-  height: 45px;
+  padding: 8px 4px;
   border-radius: 10px;
 }
-.app-icon-wrapper.icon-size-medium .app-icon-graphic i.material-icons {
+.app-icon.icon-size-medium i.material-icons {
   font-size: 24px;
+  margin-bottom: 4px;
 }
-.app-icon-wrapper.icon-size-medium .app-icon-label {
+.app-icon.icon-size-medium .app-icon-label {
   font-size: 11px;
   margin-top: 4px;
 }
 
-.app-icon-wrapper.icon-size-large {
+.app-icon.icon-size-large {
   width: 55px;
   min-height: 70px;
-  padding: 0;
-}
-.app-icon-wrapper.icon-size-large .app-icon-graphic {
-  width: 55px;
-  height: 55px;
+  padding: 10px 4px;
   border-radius: 12px;
 }
-.app-icon-wrapper.icon-size-large .app-icon-graphic i.material-icons {
+.app-icon.icon-size-large i.material-icons {
   font-size: 28px;
+  margin-bottom: 5px;
 }
-.app-icon-wrapper.icon-size-large .app-icon-label {
+.app-icon.icon-size-large .app-icon-label {
   font-size: 12px;
   margin-top: 5px;
 }
 /* End App Icon Size Classes */
 
-/* App Icon Specific Colors (Applied to .app-icon-graphic now) */
-.app-icon-graphic.phone { background-color: #09af00; }
-.app-icon-graphic.contacts { background-color: #009688; }
-.app-icon-graphic.message { background-color: #4a26fd; }
-.app-icon-graphic.services { background-color: #e64a19; }
-.app-icon-graphic.settings { background-color: #9e9e9e; }
-.app-icon-graphic.twitter {
+/* App Icon Specific Colors (Applied to .app-icon button now) */
+.app-icon.phone { background-color: #09af00; }
+.app-icon.contacts { background-color: #009688; }
+.app-icon.message { background-color: #4a26fd; }
+.app-icon.services { background-color: #e64a19; }
+.app-icon.settings { background-color: #9e9e9e; }
+.app-icon.twitter {
     background-color: white; 
-    /* The iconName 'flutter_dash' will likely show if <i> is not empty.
-       If an image is truly needed, the <i> tag might need to be empty for this specific app
-       and CSS :before/:after or direct background on the <i> might be needed.
-       For now, this rule might not fully apply as expected due to Material Icon text. */
     background-image: url("http://www.stickpng.com/assets/images/580b57fcd9996e24bc43c53e.png");
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.app-icon-graphic.twitter i.material-icons {
+.app-icon.twitter i.material-icons { /* If using Material Icon text for twitter */
     color: transparent; /* Hide the flutter_dash text if background image is desired */
 }
 
