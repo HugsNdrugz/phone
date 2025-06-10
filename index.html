@@ -52,7 +52,7 @@
 							<!-- Launcher Page 1 -->
 							<div class="launcher-page">
 								<!-- Clock Widget -->
-								<div class="clock-widget">
+								<div ng-class="['clock-widget', 'clock-look-' + settings.clockWidgetLook, 'clock-bg-' + settings.clockWidgetBackground]">
 									<div class="time">{{time.hours}}:{{time.minutes}}</div>
 									<div class="date">{{time.date}}</div>
 								</div>
@@ -121,6 +121,36 @@
 								<div class="toggleWrapper">
 									<input type="checkbox" name="toggle_dark_mode" class="mobileToggle" id="toggle_dark_mode" ng-model="darkMode" ng-change="toggleDarkMode()">
 									<label for="toggle_dark_mode"></label>
+								</div>
+							</li>
+							<li>
+								<p>Clock Text Style</p>
+								<div class="setting-option-group">
+									<div class="radio-option">
+										<input type="radio" id="clockLookDefault" name="clockWidgetLook" value="default" ng-model="settings.clockWidgetLook" ng-change="updateClockWidgetSettings()">
+										<label for="clockLookDefault">Default (White with Shadow)</label>
+									</div>
+									<div class="radio-option">
+										<input type="radio" id="clockLookDark" name="clockWidgetLook" value="transparent-dark" ng-model="settings.clockWidgetLook" ng-change="updateClockWidgetSettings()">
+										<label for="clockLookDark">Dark Text (No Shadow)</label>
+									</div>
+									<div class="radio-option">
+										<input type="radio" id="clockLookLight" name="clockWidgetLook" value="transparent-light" ng-model="settings.clockWidgetLook" ng-change="updateClockWidgetSettings()">
+										<label for="clockLookLight">Light Text (No Shadow)</label>
+									</div>
+								</div>
+							</li>
+							<li>
+								<p>Clock Background</p>
+								<div class="setting-option-group">
+									<div class="radio-option">
+										<input type="radio" id="clockBgNone" name="clockWidgetBackground" value="none" ng-model="settings.clockWidgetBackground" ng-change="updateClockWidgetSettings()">
+										<label for="clockBgNone">None</label>
+									</div>
+									<div class="radio-option">
+										<input type="radio" id="clockBgCard" name="clockWidgetBackground" value="subtle-card" ng-model="settings.clockWidgetBackground" ng-change="updateClockWidgetSettings()">
+										<label for="clockBgCard">Subtle Card</label>
+									</div>
 								</div>
 							</li>
 							<li>

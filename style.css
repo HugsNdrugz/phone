@@ -2,6 +2,7 @@
 :root {
   --bg-color: #f0f2f5;
   --card-bg-color: #ffffff;
+  --card-bg-color-rgb: 255,255,255; /* NEW: RGB for card background */
   --surface-bg-color: #f8f9fa; /* Slightly off-white for input backgrounds, if needed */
   --text-color-primary: #000000;
   --text-color-secondary: #555555;
@@ -19,6 +20,7 @@
 .theme-dark {
   --bg-color: #121212;
   --card-bg-color: #1e1e1e;
+  --card-bg-color-rgb: 30,30,30; /* NEW: RGB for dark card background */
   --surface-bg-color: #2c2c2c; /* Darker surface for inputs in dark mode */
   --text-color-primary: #ffffff;
   --text-color-secondary: #bbbbbb;
@@ -387,9 +389,49 @@ textarea.oneui-text-input-direct {
 .clock-widget {
   color: white;
   text-align: center;
-  margin-top: 40px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  margin-top: 40px; /* Base margin, can be adjusted by specific background class */
+  /* text-shadow: 0 2px 4px rgba(0,0,0,0.5); */ /* Will be overridden by clock-look-* classes */
+  transition: background-color 0.3s, padding 0.3s, margin-top 0.3s; /* Smooth transitions for bg change */
 }
+
+/* Default look (matches old default, white text with shadow) */
+.clock-widget.clock-look-default .time,
+.clock-widget.clock-look-default .date {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6); /* Slightly more defined shadow */
+}
+
+/* Dark text, no shadow (for light/transparent backgrounds) */
+.clock-widget.clock-look-transparent-dark .time,
+.clock-widget.clock-look-transparent-dark .date {
+  color: var(--text-color-primary); /* Uses theme's primary text color */
+  text-shadow: none;
+}
+
+/* Light text, no shadow (for dark/transparent backgrounds or when shadow is undesirable) */
+.clock-widget.clock-look-transparent-light .time,
+.clock-widget.clock-look-transparent-light .date {
+  color: white; /* Explicitly white, could be a variable like --always-white-text if needed */
+  text-shadow: none;
+}
+
+/* Clock Background Styles */
+.clock-widget.clock-bg-none {
+  background-color: transparent;
+  padding: 0; /* Remove padding if no background */
+  /* margin-top: 40px; */ /* Keep default margin or adjust if needed */
+}
+
+.clock-widget.clock-bg-subtle-card {
+  background-color: rgba(var(--card-bg-color-rgb), 0.1); /* Subtle card background */
+  padding: 8px 16px;
+  border-radius: 16px; /* One UI often uses larger radii for widgets */
+  margin-top: 30px; /* Adjust margin as padding is added */
+  margin-bottom: 10px; /* Add some bottom margin */
+  /* text-shadow: none; */ /* Optional: remove text shadow if card bg provides enough contrast */
+}
+
+
 .clock-widget .time {
   font-size: 48px; /* 40sp in One UI guidelines */
   font-weight: 300;

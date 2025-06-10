@@ -169,6 +169,8 @@ app.controller("ctrl", function($scope, $timeout) {
     $scope.settings.appGridSize = '4x4'; // Default app grid size
     $scope.settings.screenSizeName = 'large'; // Default phone display size
     $scope.settings.iconSize = 'medium'; // Default app icon size
+    $scope.settings.clockWidgetLook = 'default'; // Default clock text style
+    $scope.settings.clockWidgetBackground = 'none'; // Default clock background
 
     // --- Core Application Functions ---
 
@@ -421,6 +423,13 @@ app.controller("ctrl", function($scope, $timeout) {
         $scope.toggleView('error', 'App icon size set to ' + $scope.settings.iconSize);
     };
 
+    // NEW: Updates clock widget settings and shows a toast
+    $scope.updateClockWidgetSettings = function() {
+        // ng-model automatically updates $scope.settings.clockWidgetLook and $scope.settings.clockWidgetBackground
+        // ng-class on the clock widget in HTML will handle the visual change.
+        $scope.toggleView('error', 'Clock widget settings updated.');
+    };
+
     // Saves the current phone settings
     $scope.saveSettings = function() {
         // Apply phone size changes based on selected radio button - This is now handled by updatePhoneSize directly via ng-change
@@ -434,9 +443,11 @@ app.controller("ctrl", function($scope, $timeout) {
         console.log("Settings saved (Note: Save button is removed, changes apply instantly):");
         console.log("  Dark Mode:", $scope.darkMode);
         console.log("  Twitter Notifications:", $scope.isTwitterNotificationsActive);
-        console.log("  Phone Size:", $scope.settings.screenSizeName); // UPDATED
+        console.log("  Phone Size:", $scope.settings.screenSizeName);
         console.log("  App Grid Size:", $scope.settings.appGridSize);
-        console.log("  App Icon Size:", $scope.settings.iconSize); // Added for logging
+        console.log("  App Icon Size:", $scope.settings.iconSize);
+        console.log("  Clock Look:", $scope.settings.clockWidgetLook); // Added for logging
+        console.log("  Clock Background:", $scope.settings.clockWidgetBackground); // Added for logging
 
         // Provide feedback to the user that settings have been saved
         $scope.toggleView('error', 'Settings (debug log) Saved!'); // Changed message as it's more of a log now
